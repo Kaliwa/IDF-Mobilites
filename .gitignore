@@ -1,0 +1,9 @@
+.codex
+.DS_Store
+.idea/
+.vscode/
+.pnpm-store/
+**/.pnpm-store/
+.pnpm-store
+.pnpm-store/
+**/.pnpm-store/
