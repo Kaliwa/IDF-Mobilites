@@ -1,97 +1,77 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { FormEvent, useState } from "react";
-import { NavLinks } from "../components/NavLinks";
-import {
-  API_BASE_URL,
-  ApiError,
-  RegisterResponse,
-  getErrorMessage,
-  readJson,
-  setStoredToken,
-} from "../lib/auth";
+import { AuthShell } from "../components/auth/AuthShell";
+import { Field } from "../components/auth/Field";
+import { Notice } from "../components/auth/Notice";
+import { btnPrimary } from "../lib/ui";
+import { useAuthForm } from "../lib/use-auth-form";
 
 export default function RegisterPage() {
-  const router = useRouter();
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [message, setMessage] = useState<string>("");
-  const [error, setError] = useState<string>("");
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setIsLoading(true);
-    setMessage("");
-    setError("");
-
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/register`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
-
-      const data = await readJson<RegisterResponse | ApiError>(response);
-
-      if (!response.ok) {
-        setError(
-          getErrorMessage(data as ApiError | null, "Registration failed."),
-        );
-        return;
-      }
-
-      const registerData = data as RegisterResponse;
-      setStoredToken(registerData.token);
-      setMessage(registerData.message);
-      router.push("/");
-      router.refresh();
-    } catch {
-      setError("Unable to reach the API.");
-    } finally {
-      setIsLoading(false);
-    }
-  }
+  const { email, setEmail, password, setPassword, error, isLoading, handleSubmit } =
+    useAuthForm("register", "Création du compte impossible.");
 
   return (
-    <main>
-      <h1>Register</h1>
-      <NavLinks />
+    <AuthShell
+      asideTitle="Rejoignez l'espace Comutitres."
+      asideText="Créez votre compte une fois : il vous suivra tout au long de votre vie de voyageur, du forfait Imagine R au Navigo Senior."
+      highlights={[
+        { value: "Navigo", label: "annuel & senior" },
+        { value: "Imagine R", label: "étudiant & scolaire" },
+        { value: "TST", label: "tarif solidarité" },
+      ]}
+    >
+      <div className="space-y-8">
+        <header className="space-y-2">
+          <h1 className="text-3xl font-bold tracking-tight text-anthracite">Créer un compte</h1>
+          <p className="text-sm text-muted">
+            Un compte unique pour souscrire et gérer tous vos titres.
+          </p>
+        </header>
 
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="email">Email</label>
-        <input
-          id="email"
-          name="email"
-          type="email"
-          value={email}
-          onChange={(event) => setEmail(event.target.value)}
-        />
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <Field
+            id="email"
+            label="Adresse e-mail"
+            type="email"
+            value={email}
+            onChange={setEmail}
+            autoComplete="email"
+            placeholder="prenom.nom@exemple.fr"
+          />
+          <Field
+            id="password"
+            label="Mot de passe"
+            type="password"
+            value={password}
+            onChange={setPassword}
+            autoComplete="new-password"
+            placeholder="8 caractères minimum"
+          />
 
-        <label htmlFor="password">Password</label>
-        <input
-          id="password"
-          name="password"
-          type="password"
-          value={password}
-          onChange={(event) => setPassword(event.target.value)}
-        />
+          <button type="submit" className={`${btnPrimary} w-full`} disabled={isLoading}>
+            {isLoading ? "Création en cours…" : "Créer mon compte"}
+          </button>
 
-        <button type="submit" disabled={isLoading}>
-          Register
-        </button>
-      </form>
+          {error ? <Notice tone="error">{error}</Notice> : null}
+        </form>
 
-      {message ? <p>{message}</p> : null}
-      {error ? <p>{error}</p> : null}
+        <p className="text-[0.7rem] leading-relaxed text-muted">
+          En créant un compte, vous acceptez les conditions générales de vente et
+          d&apos;utilisation et la politique de confidentialité d&apos;Île-de-France
+          Mobilités. Vos données sont traitées dans le respect du RGPD.
+        </p>
 
-      <p>
-        Already registered? <Link href="/login">Go to login</Link>
-      </p>
-    </main>
+        <p className="text-sm text-muted">
+          Vous avez déjà un compte ?{" "}
+          <Link
+            href="/login"
+            className="font-semibold text-idf-interaction hover:text-idf-focus"
+          >
+            Se connecter
+          </Link>
+        </p>
+      </div>
+    </AuthShell>
   );
 }
