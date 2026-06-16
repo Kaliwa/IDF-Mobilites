@@ -6,6 +6,7 @@ import { Brand } from "../auth/Brand";
 import { useAuth } from "../../lib/auth-context";
 import { btnGhost, btnPrimary, glassNav } from "../../lib/ui";
 import { SearchIcon, UserIcon } from "./icons";
+import { MobileMenu } from "./MobileMenu";
 
 const NAV = [
   { href: "#forfaits", label: "Titres & tarifs" },
@@ -45,16 +46,19 @@ export function SiteHeader() {
         <div className="flex items-center gap-2 sm:gap-3">
           <button
             type="button"
-            className="hidden h-10 w-10 items-center justify-center rounded-xl border border-anthracite/10 bg-white/50 text-anthracite/70 transition-colors hover:text-idf-interaction sm:inline-flex"
+            className="hidden h-10 w-10 items-center justify-center rounded-xl border border-anthracite/10 bg-white/50 text-anthracite/70 transition-colors hover:text-idf-interaction lg:inline-flex"
             aria-label="Rechercher"
           >
             <SearchIcon width={18} height={18} />
           </button>
 
           {loading ? (
-            <span className="h-10 w-28 animate-pulse rounded-xl bg-white/50" aria-hidden="true" />
+            <span
+              className="hidden h-10 w-28 animate-pulse rounded-xl bg-white/50 lg:block"
+              aria-hidden="true"
+            />
           ) : user ? (
-            <div className="flex items-center gap-2">
+            <div className="hidden items-center gap-2 lg:flex">
               <Link href="/" className={`${btnGhost} px-4 py-2.5`}>
                 <UserIcon width={18} height={18} />
                 Mon espace
@@ -68,7 +72,7 @@ export function SiteHeader() {
               </button>
             </div>
           ) : (
-            <div className="flex items-center gap-2">
+            <div className="hidden items-center gap-2 lg:flex">
               <Link href="/login" className={`${btnGhost} px-4 py-2.5`}>
                 Connexion
               </Link>
@@ -77,6 +81,8 @@ export function SiteHeader() {
               </Link>
             </div>
           )}
+
+          <MobileMenu nav={NAV} />
         </div>
       </div>
     </header>
