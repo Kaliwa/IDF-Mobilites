@@ -1,42 +1,141 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f5f0e8;
-  --foreground: #1e2430;
-  --surface: #fffaf2;
-  --surface-strong: #ffffff;
-  --accent: #0f766e;
-  --accent-soft: #d8f3ef;
-  --muted: #667085;
-  --border: rgba(30, 36, 48, 0.1);
+  --idf-blue: #64b5f6;
+  --idf-interaction: #1972d2;
+  --idf-focus: #0050aa;
+  --anthracite: #25303b;
+  --gray-dark: #53606e;
+  --success: #007d44;
+  --danger: #c52625;
+  --warning: #f39224;
+
+  --background: #e8f1ff;
+  --foreground: var(--anthracite);
+  --muted: var(--gray-dark);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --color-surface: var(--surface);
-  --color-surface-strong: var(--surface-strong);
-  --color-accent: var(--accent);
-  --color-accent-soft: var(--accent-soft);
+  --color-idf-blue: var(--idf-blue);
+  --color-idf-interaction: var(--idf-interaction);
+  --color-idf-focus: var(--idf-focus);
+  --color-anthracite: var(--anthracite);
+  --color-gray-dark: var(--gray-dark);
   --color-muted: var(--muted);
-  --color-border: var(--border);
+  --color-success: var(--success);
+  --color-danger: var(--danger);
+  --color-warning: var(--warning);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-geist-sans), sans-serif;
-  background-image:
-    radial-gradient(circle at top left, rgba(15, 118, 110, 0.18), transparent 28%),
-    radial-gradient(circle at bottom right, rgba(217, 119, 6, 0.14), transparent 24%);
+/* @layer base : garde les utilitaires Tailwind (text-white…) prioritaires
+   sur ces resets — sans la couche, `a { color: inherit }` les écraserait. */
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    color: var(--foreground);
+    font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--background);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a {
+    color: inherit;
+  }
 }
 
-a {
-  color: inherit;
+.auth-bg,
+.home {
+  position: relative;
+  isolation: isolate;
 }
 
-* {
-  border-color: var(--border);
+.auth-bg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100dvh;
+  padding: clamp(1rem, 4vw, 3rem);
+  overflow: hidden;
+}
+
+.home {
+  min-height: 100dvh;
+}
+
+.auth-bg::before,
+.home::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background:
+    radial-gradient(55% 55% at 12% 8%, rgba(100, 181, 246, 0.85), transparent 60%),
+    radial-gradient(50% 50% at 88% 4%, rgba(25, 114, 210, 0.7), transparent 60%),
+    radial-gradient(55% 60% at 82% 80%, rgba(145, 133, 190, 0.7), transparent 62%),
+    radial-gradient(55% 55% at 8% 92%, rgba(0, 80, 170, 0.55), transparent 60%),
+    linear-gradient(180deg, #e6f0ff 0%, #d8e7ff 100%);
+}
+
+.auth-bg::before {
+  position: absolute;
+  inset: -20%;
+  filter: saturate(1.2);
+  animation: aurora-drift 22s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+.auth-bg::after,
+.home::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  opacity: 0.04;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+@keyframes aurora-drift {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+  }
+  50% {
+    transform: translate3d(2%, -3%, 0) rotate(8deg) scale(1.08);
+  }
+  100% {
+    transform: translate3d(-2%, 2%, 0) rotate(-6deg) scale(1.04);
+  }
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.rise-in {
+  opacity: 0;
+  animation: rise-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-bg::before,
+  .rise-in {
+    animation: none;
+  }
+  .rise-in {
+    opacity: 1;
+  }
 }

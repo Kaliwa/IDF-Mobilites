@@ -1,94 +1,71 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { FormEvent, useState } from "react";
-import { NavLinks } from "../components/NavLinks";
-import {
-  API_BASE_URL,
-  ApiError,
-  LoginResponse,
-  getErrorMessage,
-  readJson,
-  setStoredToken,
-} from "../lib/auth";
+import { AuthShell } from "../components/auth/AuthShell";
+import { Field } from "../components/auth/Field";
+import { Notice } from "../components/auth/Notice";
+import { btnPrimary } from "../lib/ui";
+import { useAuthForm } from "../lib/use-auth-form";
 
 export default function LoginPage() {
-  const router = useRouter();
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [message, setMessage] = useState<string>("");
-  const [error, setError] = useState<string>("");
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setIsLoading(true);
-    setMessage("");
-    setError("");
-
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
-
-      const data = await readJson<LoginResponse | ApiError>(response);
-
-      if (!response.ok) {
-        setError(getErrorMessage(data as ApiError | null, "Login failed."));
-        return;
-      }
-
-      setStoredToken((data as LoginResponse).token);
-      setMessage("Login successful.");
-      router.push("/");
-      router.refresh();
-    } catch {
-      setError("Unable to reach the API.");
-    } finally {
-      setIsLoading(false);
-    }
-  }
+  const { email, setEmail, password, setPassword, error, isLoading, handleSubmit } =
+    useAuthForm("login", "Connexion impossible.");
 
   return (
-    <main>
-      <h1>Login</h1>
-      <NavLinks />
+    <AuthShell
+      asideTitle="Vos titres Navigo, simplement."
+      asideText="Souscrivez, renouvelez et gérez vos forfaits Île-de-France Mobilités depuis un espace unique, sécurisé et accessible à tous."
+      highlights={[
+        { value: "9,4 M", label: "déplacements / jour" },
+        { value: "6,7 M", label: "clients franciliens" },
+        { value: "100 %", label: "en ligne" },
+      ]}
+    >
+      <div className="space-y-8">
+        <header className="space-y-2">
+          <h1 className="text-3xl font-bold tracking-tight text-anthracite">Connexion</h1>
+          <p className="text-sm text-muted">
+            Accédez à votre espace de souscription Comutitres.
+          </p>
+        </header>
 
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="email">Email</label>
-        <input
-          id="email"
-          name="email"
-          type="email"
-          value={email}
-          onChange={(event) => setEmail(event.target.value)}
-        />
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <Field
+            id="email"
+            label="Adresse e-mail"
+            type="email"
+            value={email}
+            onChange={setEmail}
+            autoComplete="email"
+            placeholder="prenom.nom@exemple.fr"
+          />
+          <Field
+            id="password"
+            label="Mot de passe"
+            type="password"
+            value={password}
+            onChange={setPassword}
+            autoComplete="current-password"
+            placeholder="••••••••"
+          />
 
-        <label htmlFor="password">Password</label>
-        <input
-          id="password"
-          name="password"
-          type="password"
-          value={password}
-          onChange={(event) => setPassword(event.target.value)}
-        />
+          <button type="submit" className={`${btnPrimary} w-full`} disabled={isLoading}>
+            {isLoading ? "Connexion en cours…" : "Se connecter"}
+          </button>
 
-        <button type="submit" disabled={isLoading}>
-          Login
-        </button>
-      </form>
+          {error ? <Notice tone="error">{error}</Notice> : null}
+        </form>
 
-      {message ? <p>{message}</p> : null}
-      {error ? <p>{error}</p> : null}
-
-      <p>
-        No account? <Link href="/register">Go to register</Link>
-      </p>
-    </main>
+        <p className="text-sm text-muted">
+          Pas encore de compte ?{" "}
+          <Link
+            href="/register"
+            className="font-semibold text-idf-interaction hover:text-idf-focus"
+          >
+            Créer un compte
+          </Link>
+        </p>
+      </div>
+    </AuthShell>
   );
 }

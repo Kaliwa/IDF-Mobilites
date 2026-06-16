@@ -1,14 +1,24 @@
-import { AuthStatus } from "./components/AuthStatus";
-import { LogoutButton } from "./components/LogoutButton";
-import { NavLinks } from "./components/NavLinks";
+import { AuthProvider } from "./lib/auth-context";
+import { SiteHeader } from "./components/home/SiteHeader";
+import { Hero } from "./components/home/Hero";
+import { QuickAccess } from "./components/home/QuickAccess";
+import { Forfaits } from "./components/home/Forfaits";
+import { NetworkStats } from "./components/home/NetworkStats";
+import { SiteFooter } from "./components/home/SiteFooter";
 
 export default function HomePage() {
   return (
-    <main>
-      <h1>Auth status</h1>
-      <NavLinks />
-      <AuthStatus />
-      <LogoutButton />
-    </main>
+    <AuthProvider>
+      <div className="home flex min-h-dvh flex-col">
+        <SiteHeader />
+        <main className="flex-1">
+          <Hero />
+          <QuickAccess />
+          <Forfaits />
+          <NetworkStats />
+        </main>
+        <SiteFooter />
+      </div>
+    </AuthProvider>
   );
 }
