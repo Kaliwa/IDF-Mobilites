@@ -21,3 +21,29 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    App\Service\DisruptionService: ~
+
+    App\Service\JustificatifPdfBuilder:
+        arguments:
+            $issuerName: '%env(string:JUSTIF_ORG_NAME)%'
+
+    App\Service\PrimClient:
+        arguments:
+            $primApiToken: '%env(PRIM_API_TOKEN)%'
+
+    App\Service\LineRefResolver:
+        arguments:
+            $apiKey: '%env(PRIM_API_TOKEN)%'
+            $navitiaBaseUrl: '%env(default::PRIM_NAVITIA_URL)%'
+
+    App\Service\NavitiaDisruptionClient:
+        arguments:
+            $apiKey: '%env(PRIM_API_TOKEN)%'
+            $navitiaBaseUrl: '%env(default::PRIM_NAVITIA_URL)%'
+
+    App\Service\IdfmRouteService:
+        arguments:
+            $apiKey: '%env(PRIM_API_TOKEN)%'
+            $navitiaBaseUrl: '%env(default::PRIM_NAVITIA_URL)%'
+            $osrmUrl: '%env(default::OSRM_URL)%'

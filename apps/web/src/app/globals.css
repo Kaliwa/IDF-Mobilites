@@ -1,3 +1,4 @@
+@import url("leaflet/dist/leaflet.css");
 @import "tailwindcss";
 
 :root {
@@ -34,19 +35,37 @@
 /* @layer base : garde les utilitaires Tailwind (text-white…) prioritaires
    sur ces resets — sans la couche, `a { color: inherit }` les écraserait. */
 @layer base {
+  html {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+    overflow-x: clip;
+  }
+
   * {
     box-sizing: border-box;
   }
 
   body {
+    width: 100%;
+    max-width: 100%;
     color: var(--foreground);
     font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, sans-serif;
     background: var(--background);
     -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    overflow-x: clip;
   }
 
   a {
     color: inherit;
+  }
+
+  img,
+  svg,
+  video,
+  canvas {
+    max-width: 100%;
   }
 }
 
@@ -54,6 +73,10 @@
 .home {
   position: relative;
   isolation: isolate;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 .auth-bg {
@@ -123,6 +146,14 @@
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* Keep address autocomplete above the Leaflet map in the trip form */
+.trip-map.leaflet-container,
+.trip-map .leaflet-pane,
+.trip-map .leaflet-top,
+.trip-map .leaflet-bottom {
+  z-index: 1 !important;
 }
 
 .rise-in {

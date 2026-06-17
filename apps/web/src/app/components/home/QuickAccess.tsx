@@ -23,28 +23,28 @@ const ITEMS: Access[] = [
     Icon: CompassIcon,
   },
   {
-    title: "Mes attestations",
-    text: "Téléchargez vos attestations et justificatifs en quelques clics.",
-    href: "#",
+    title: "Mes trajets",
+    text: "Consultez vos trajets enregistrés, vérifiez les incidents et téléchargez vos justificatifs.",
+    href: "/trajets",
     Icon: DocumentIcon,
   },
   {
-    title: "Suivi de dossier",
-    text: "Suivez la validation de vos justificatifs, traitée de façon asynchrone.",
-    href: "#",
+    title: "Lignes suivies",
+    text: "Retrouvez vos lignes favorites et choisissez vos canaux d'alerte.",
+    href: "/notifications",
     Icon: ClockIcon,
   },
   {
-    title: "Aide & SAV",
-    text: "Suspension, changement de payeur, renouvellement : nous vous accompagnons.",
-    href: "#aide",
+    title: "Alertes trafic",
+    text: "Consultez les notifications utiles sur les incidents, paiements et renouvellements.",
+    href: "/notifications",
     Icon: LifeBuoyIcon,
   },
 ];
 
 export function QuickAccess() {
   return (
-    <section id="acces" className="mx-auto max-w-6xl scroll-mt-20 px-4 py-14 sm:px-6">
+    <section id="acces" className="mx-auto w-full max-w-6xl scroll-mt-20 px-4 py-14 sm:px-6">
       <span className={sectionAccent} aria-hidden="true" />
       <h2 className="text-2xl font-bold tracking-tight text-anthracite sm:text-3xl">
         Tout pour vos déplacements

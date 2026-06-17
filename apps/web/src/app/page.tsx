@@ -6,6 +6,7 @@ import { QuickAccess } from "./components/home/QuickAccess";
 import { Forfaits } from "./components/home/Forfaits";
 import { NetworkStats } from "./components/home/NetworkStats";
 import { SiteFooter } from "./components/home/SiteFooter";
+import { JourneySection } from "./components/trips/JourneySection";
 
 export default function HomePage() {
   return (
@@ -15,6 +16,7 @@ export default function HomePage() {
         <main className="flex-1">
           <Hero />
           <OrientationBanner />
+          <JourneySection />
           <QuickAccess />
           <Forfaits />
           <NetworkStats />

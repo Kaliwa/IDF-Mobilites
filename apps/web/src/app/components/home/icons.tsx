@@ -90,3 +90,37 @@ export function CheckIcon(props: SVGProps<SVGSVGElement>) {
     </svg>
   );
 }
+
+export function BellIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg {...base} {...props} aria-hidden="true">
+      <path d="M15 17H5.5a1.5 1.5 0 0 1-1.2-2.4l.7-.9c.7-.9 1-2 1-3.1V9a6 6 0 1 1 12 0v1.6c0 1.1.4 2.2 1 3.1l.7.9a1.5 1.5 0 0 1-1.2 2.4H15" />
+      <path d="M9.5 17a2.5 2.5 0 0 0 5 0" />
+    </svg>
+  );
+}
+
+export function MessageSquareIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg {...base} {...props} aria-hidden="true">
+      <path d="M7 18.5c-1.7 0-3-1.3-3-3v-8c0-1.7 1.3-3 3-3h10c1.7 0 3 1.3 3 3v8c0 1.7-1.3 3-3 3H11l-4 2z" />
+      <path d="M8.5 10.5h7M8.5 14h5" />
+    </svg>
+  );
+}
+
+export function MenuIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg {...base} {...props} aria-hidden="true">
+      <path d="M4 7h16M4 12h16M4 17h16" />
+    </svg>
+  );
+}
+
+export function CloseIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg {...base} {...props} aria-hidden="true">
+      <path d="M6 6l12 12M18 6 6 18" />
+    </svg>
+  );
+}
