@@ -1,25 +1,83 @@
 @import url("leaflet/dist/leaflet.css");
 @import "tailwindcss";
 
-:root {
-  --idf-blue: #64b5f6;
-  --idf-interaction: #1972d2;
-  --idf-focus: #0050aa;
-  --anthracite: #25303b;
-  --gray-dark: #53606e;
-  --success: #007d44;
-  --danger: #c52625;
-  --warning: #f39224;
+/* ------------------------------------------------------------------ */
+/*  Typographies de marque Île-de-France Mobilités                    */
+/*  IDF Voyageur  → titres & espaces contraints (display, UI, CTA)    */
+/*  Grand Paris   → textes courants & espaces denses (corps de texte) */
+/*                                                                    */
+/*  Polices propriétaires IDFM : déposer les fichiers .woff2 dans     */
+/*  apps/web/public/fonts/. Tant qu'ils sont absents, le fallback     */
+/*  institutionnel sans-serif (Geist / système) s'applique.           */
+/* ------------------------------------------------------------------ */
+@font-face {
+  font-family: "IDF Voyageur";
+  src: url("/fonts/IDFVoyageur-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "IDF Voyageur";
+  src: url("/fonts/IDFVoyageur-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Grand Paris";
+  src: url("/fonts/GrandParis-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Grand Paris";
+  src: url("/fonts/GrandParis-Medium.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Grand Paris";
+  src: url("/fonts/GrandParis-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
 
-  --background: #e8f1ff;
+:root {
+  /* --- Palette officielle Île-de-France Mobilités (RVB / digital) --- */
+  --idf-blue: #5291ce;          /* bleu outremer — accent clair */
+  --idf-blue-light: #98d4e2;    /* bleu clair — fonds & survols légers */
+  --idf-interaction: #0064b0;   /* bleu foncé — couleur principale, actions, liens */
+  --idf-focus: #14489f;         /* bleu nuit — survol/focus, titres */
+  --anthracite: #25303b;        /* noir IDFM — texte principal */
+  --gray-dark: #53606e;         /* gris — texte secondaire */
+  --success: #00814f;           /* vert foncé IDFM */
+  --danger: #e3051c;            /* rouge coquelicot IDFM */
+  --warning: #f28e42;           /* orange IDFM */
+
+  --background: #f4f7fb;         /* surface institutionnelle claire, sobre */
+  --surface: #ffffff;           /* cartes & panneaux */
+  --border: #d8e0ea;            /* bordures nettes (bleu-gris discret) */
   --foreground: var(--anthracite);
   --muted: var(--gray-dark);
+
+  /* Familles typographiques de marque + fallbacks institutionnels */
+  --font-display: "IDF Voyageur", var(--font-geist-sans), -apple-system,
+    BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-text: "Grand Paris", var(--font-geist-sans), -apple-system,
+    BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 @theme inline {
   --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-border: var(--border);
   --color-foreground: var(--foreground);
   --color-idf-blue: var(--idf-blue);
+  --color-idf-blue-light: var(--idf-blue-light);
   --color-idf-interaction: var(--idf-interaction);
   --color-idf-focus: var(--idf-focus);
   --color-anthracite: var(--anthracite);
@@ -28,7 +86,8 @@
   --color-success: var(--success);
   --color-danger: var(--danger);
   --color-warning: var(--warning);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-text);
+  --font-display: var(--font-display);
   --font-mono: var(--font-geist-mono);
 }
 
@@ -50,11 +109,16 @@
     width: 100%;
     max-width: 100%;
     color: var(--foreground);
-    font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family: var(--font-text);
     background: var(--background);
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
     overflow-x: clip;
+  }
+
+  /* Titres en IDF Voyageur (espaces contraints / display) */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
   }
 
   a {
@@ -92,49 +156,27 @@
   min-height: 100dvh;
 }
 
+/* Fond institutionnel sobre : surface claire unie, sans aurora ni bruit.
+   Un aplat bleu IDFM discret coiffe le haut de page pour ancrer la marque. */
 .auth-bg::before,
 .home::before {
   content: "";
   position: fixed;
   inset: 0;
   z-index: -2;
-  background:
-    radial-gradient(55% 55% at 12% 8%, rgba(100, 181, 246, 0.85), transparent 60%),
-    radial-gradient(50% 50% at 88% 4%, rgba(25, 114, 210, 0.7), transparent 60%),
-    radial-gradient(55% 60% at 82% 80%, rgba(145, 133, 190, 0.7), transparent 62%),
-    radial-gradient(55% 55% at 8% 92%, rgba(0, 80, 170, 0.55), transparent 60%),
-    linear-gradient(180deg, #e6f0ff 0%, #d8e7ff 100%);
+  background: var(--background);
 }
 
-.auth-bg::before {
-  position: absolute;
-  inset: -20%;
-  filter: saturate(1.2);
-  animation: aurora-drift 22s ease-in-out infinite alternate;
-  will-change: transform;
-}
-
-.auth-bg::after,
 .home::after {
   content: "";
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 22rem;
   z-index: -1;
-  opacity: 0.04;
   pointer-events: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-}
-
-@keyframes aurora-drift {
-  0% {
-    transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
-  }
-  50% {
-    transform: translate3d(2%, -3%, 0) rotate(8deg) scale(1.08);
-  }
-  100% {
-    transform: translate3d(-2%, 2%, 0) rotate(-6deg) scale(1.04);
-  }
+  background: linear-gradient(180deg, rgba(0, 100, 176, 0.06) 0%, transparent 100%);
 }
 
 @keyframes rise-in {
@@ -162,11 +204,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .auth-bg::before,
   .rise-in {
     animation: none;
-  }
-  .rise-in {
     opacity: 1;
   }
 }

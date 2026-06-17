@@ -17,7 +17,7 @@ export function AccountCard() {
     return (
       <div className={`${glass} min-w-0 p-6 sm:p-7`}>
         <div className="flex items-center gap-3">
-          <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-idf-interaction to-idf-focus text-lg font-bold text-white">
+          <span className="flex h-12 w-12 items-center justify-center rounded-lg bg-idf-interaction text-lg font-bold text-white">
             {initial}
           </span>
           <div className="min-w-0">
@@ -26,7 +26,7 @@ export function AccountCard() {
           </div>
         </div>
 
-        <div className="mt-5 rounded-2xl border border-white/60 bg-white/40 p-4">
+        <div className="mt-5 rounded-lg border border-border bg-background p-4">
           <div className="flex items-center justify-between">
             <span className="text-sm font-medium text-anthracite/80">
               Statut de l&apos;abonnement

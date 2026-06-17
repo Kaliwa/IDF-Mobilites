@@ -20,7 +20,7 @@ export function NetworkStats() {
           {STATS.map((stat) => (
             <div key={stat.label}>
               <dt className="flex items-baseline gap-1">
-                <span className="bg-gradient-to-r from-idf-interaction to-idf-focus bg-clip-text text-3xl font-bold text-transparent sm:text-4xl">
+                <span className="text-3xl font-bold text-idf-interaction sm:text-4xl">
                   {stat.value}
                 </span>
                 {stat.unit ? (

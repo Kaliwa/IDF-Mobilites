@@ -105,7 +105,7 @@ export function MobileMenu({ nav }: { nav: NavItem[] }) {
         ref={triggerRef}
         type="button"
         onClick={() => setOpen(true)}
-        className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-anthracite/10 bg-white/50 text-anthracite/80 transition-colors hover:text-idf-interaction focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-idf-focus lg:hidden"
+        className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-border bg-surface text-anthracite/80 transition-colors hover:text-idf-interaction focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-idf-focus lg:hidden"
         aria-label="Ouvrir le menu"
         aria-haspopup="dialog"
         aria-expanded={open}
@@ -130,7 +130,7 @@ export function MobileMenu({ nav }: { nav: NavItem[] }) {
             <div
               onClick={close}
               aria-hidden="true"
-              className={`absolute inset-0 bg-idf-focus/25 backdrop-blur-sm transition-opacity duration-300 motion-reduce:transition-none ${
+              className={`absolute inset-0 bg-anthracite/45 transition-opacity duration-300 motion-reduce:transition-none ${
                 open ? "opacity-100" : "opacity-0"
               }`}
             />
@@ -143,7 +143,7 @@ export function MobileMenu({ nav }: { nav: NavItem[] }) {
               aria-label="Menu principal"
               inert={!open}
               onKeyDown={trapFocus}
-              className={`absolute inset-y-0 right-0 flex w-[min(20rem,85vw)] flex-col border-l border-white/50 bg-white/85 shadow-[0_24px_60px_-20px_rgba(0,80,170,0.55)] backdrop-blur-2xl backdrop-saturate-150 transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none ${
+              className={`absolute inset-y-0 right-0 flex w-[min(20rem,85vw)] flex-col border-l border-border bg-surface shadow-[0_24px_60px_-20px_rgba(0,80,170,0.25)] transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none ${
                 open ? "translate-x-0" : "translate-x-full"
               }`}
             >
@@ -154,7 +154,7 @@ export function MobileMenu({ nav }: { nav: NavItem[] }) {
                 <button
                   type="button"
                   onClick={close}
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-anthracite/10 bg-white/60 text-anthracite/80 transition-colors hover:text-idf-interaction focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-idf-focus"
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-border bg-surface text-anthracite/80 transition-colors hover:text-idf-interaction focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-idf-focus"
                   aria-label="Fermer le menu"
                 >
                   <CloseIcon width={20} height={20} />
@@ -221,7 +221,7 @@ export function MobileMenu({ nav }: { nav: NavItem[] }) {
               <div className="mt-auto border-t border-anthracite/10 px-5 py-5">
                 {loading ? (
                   <span
-                    className="block h-12 w-full animate-pulse rounded-xl bg-white/60"
+                    className="block h-12 w-full animate-pulse rounded-lg bg-border/60"
                     aria-hidden="true"
                   />
                 ) : user ? (

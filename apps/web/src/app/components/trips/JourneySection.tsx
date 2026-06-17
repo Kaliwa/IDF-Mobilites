@@ -221,7 +221,7 @@ export function JourneySection() {
               </label>
               <div className="space-y-1 text-sm text-anthracite/80">
                 <span className="font-semibold">Lignes principales</span>
-                <div className="min-h-[42px] rounded-2xl border border-white/70 bg-white/60 px-3 py-2">
+                <div className="min-h-[42px] rounded-lg border border-border bg-surface px-3 py-2">
                   {activeRoute?.segments.length ? (
                     <LineBadgeList segments={activeRoute.segments} />
                   ) : (

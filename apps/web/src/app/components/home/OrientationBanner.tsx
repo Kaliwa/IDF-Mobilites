@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { btnPrimary, chip, glass, iconBadge, sectionAccent } from "../../lib/ui";
+import { btnGhost, chip, glass, iconBadge, sectionAccent } from "../../lib/ui";
 import { ArrowRightIcon, CompassIcon } from "./icons";
 
 // Situations mises en avant dans la banderole (renvoient toutes vers le parcours guidé).
@@ -33,9 +33,7 @@ export function OrientationBanner() {
 
             <h2 className="mt-4 text-2xl font-bold leading-tight tracking-tight text-anthracite sm:text-3xl">
               Un changement dans votre vie&nbsp;?{" "}
-              <span className="bg-gradient-to-r from-idf-interaction to-idf-focus bg-clip-text text-transparent">
-                On trouve votre offre.
-              </span>
+              <span className="text-idf-interaction">On trouve votre offre.</span>
             </h2>
             <p className="mt-3 max-w-xl text-base leading-relaxed text-muted">
               Plutôt que de comparer tous les forfaits, partez de votre situation. En quelques
@@ -44,7 +42,7 @@ export function OrientationBanner() {
             </p>
 
             <div className="mt-6">
-              <Link href="/orientation" className={`${btnPrimary} sm:px-7`}>
+              <Link href="/orientation" className={`${btnGhost} sm:px-7`}>
                 Trouver mon offre en quelques questions
                 <ArrowRightIcon width={16} height={16} />
               </Link>

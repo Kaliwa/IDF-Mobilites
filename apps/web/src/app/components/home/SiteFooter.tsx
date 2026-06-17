@@ -39,7 +39,7 @@ const LEGAL = [
 
 export function SiteFooter() {
   return (
-    <footer id="aide" className="mt-8 scroll-mt-20 border-t border-white/60 bg-white/35 backdrop-blur">
+    <footer id="aide" className="mt-8 scroll-mt-20 border-t border-border bg-surface">
       <div className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6">
         <div className="grid gap-10 md:grid-cols-[1.2fr_repeat(3,1fr)]">
           <div>
@@ -69,7 +69,7 @@ export function SiteFooter() {
           ))}
         </div>
 
-        <div className="mt-10 flex flex-col gap-4 border-t border-white/60 pt-6 text-xs text-muted sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-10 flex flex-col gap-4 border-t border-border pt-6 text-xs text-muted sm:flex-row sm:items-center sm:justify-between">
           <ul className="flex flex-wrap gap-x-5 gap-y-2">
             {LEGAL.map((item) => (
               <li key={item.label}>
