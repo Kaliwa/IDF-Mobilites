@@ -15,7 +15,7 @@ export function AccountCard() {
   if (user) {
     const initial = user.email.charAt(0).toUpperCase();
     return (
-      <div className={`${glass} p-6 sm:p-7`}>
+      <div className={`${glass} min-w-0 p-6 sm:p-7`}>
         <div className="flex items-center gap-3">
           <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-idf-interaction to-idf-focus text-lg font-bold text-white">
             {initial}
@@ -41,7 +41,7 @@ export function AccountCard() {
           </p>
         </div>
 
-        <div className="mt-5 grid grid-cols-2 gap-3">
+        <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
           <Link href="#forfaits" className={`${btnPrimary} text-sm`}>
             Souscrire un titre
           </Link>
@@ -54,7 +54,7 @@ export function AccountCard() {
   }
 
   return (
-    <div className={`${glass} p-6 sm:p-7`}>
+      <div className={`${glass} min-w-0 p-6 sm:p-7`}>
       <span className={iconBadge}>
         <CardIcon width={22} height={22} />
       </span>

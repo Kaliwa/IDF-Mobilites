@@ -123,7 +123,7 @@ export function Forfaits() {
   const group = GROUPS.find((item) => item.key === active) ?? GROUPS[0];
 
   return (
-    <section id="forfaits" className="mx-auto max-w-6xl px-4 py-14 sm:px-6 scroll-mt-20">
+    <section id="forfaits" className="mx-auto w-full max-w-6xl px-4 py-14 sm:px-6 scroll-mt-20">
       <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <span className={sectionAccent} aria-hidden="true" />
@@ -134,7 +134,7 @@ export function Forfaits() {
         </div>
 
         <div
-          className="inline-flex flex-wrap gap-1 rounded-full border border-white/60 bg-white/35 p-1 backdrop-blur-xl"
+          className="grid grid-cols-1 gap-1 rounded-3xl border border-white/60 bg-white/35 p-1 backdrop-blur-xl sm:grid-cols-2 lg:inline-flex lg:flex-wrap"
           role="tablist"
           aria-label="Type de trajet"
         >

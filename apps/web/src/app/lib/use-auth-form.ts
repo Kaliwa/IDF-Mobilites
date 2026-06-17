@@ -6,6 +6,8 @@ import {
   API_BASE_URL,
   ApiError,
   getErrorMessage,
+  hasSupportAccess,
+  MeResponse,
   readJson,
   setStoredToken,
 } from "./auth";
@@ -38,8 +40,29 @@ export function useAuthForm(endpoint: "login" | "register", fallbackError: strin
         return;
       }
 
-      setStoredToken((data as TokenResponse).token);
-      router.push("/");
+      const token = (data as TokenResponse).token;
+      setStoredToken(token);
+
+      if (endpoint === "login") {
+        const meResponse = await fetch(`${API_BASE_URL}/api/me`, {
+          headers: { Authorization: `Bearer ${token}` },
+          cache: "no-store",
+        });
+
+        const meData = await readJson<MeResponse | ApiError>(meResponse);
+
+        if (!meResponse.ok) {
+          setStoredToken("");
+          setError(getErrorMessage(meData as ApiError | null, fallbackError));
+          return;
+        }
+
+        const roles = (meData as MeResponse).user.roles;
+        router.push(hasSupportAccess(roles) ? "/support/inbox" : "/");
+      } else {
+        router.push("/");
+      }
+
       router.refresh();
     } catch {
       setError("Le service est momentanément injoignable.");

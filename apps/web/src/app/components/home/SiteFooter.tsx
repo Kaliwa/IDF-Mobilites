@@ -15,7 +15,8 @@ const COLUMNS = [
     links: [
       { label: "Connexion", href: "/login" },
       { label: "Créer un compte", href: "/register" },
-      { label: "Suivi de dossier", href: "#acces" },
+      { label: "Notifications", href: "/notifications" },
+      { label: "Messages", href: "/messages" },
     ],
   },
   {
@@ -39,7 +40,7 @@ const LEGAL = [
 export function SiteFooter() {
   return (
     <footer id="aide" className="mt-8 scroll-mt-20 border-t border-white/60 bg-white/35 backdrop-blur">
-      <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
+      <div className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6">
         <div className="grid gap-10 md:grid-cols-[1.2fr_repeat(3,1fr)]">
           <div>
             <Brand tone="dark" />

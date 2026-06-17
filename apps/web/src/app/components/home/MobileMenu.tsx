@@ -11,8 +11,10 @@ import { createPortal } from "react-dom";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../../lib/auth-context";
+import { isSupportUser } from "../../lib/auth";
+import { useUnreadNotificationsCount } from "../../lib/notifications-live";
 import { btnGhost, btnPrimary } from "../../lib/ui";
-import { ArrowRightIcon, CloseIcon, MenuIcon, UserIcon } from "./icons";
+import { ArrowRightIcon, BellIcon, CloseIcon, MenuIcon, MessageSquareIcon, UserIcon } from "./icons";
 
 type NavItem = { href: string; label: string };
 
@@ -23,6 +25,10 @@ export function MobileMenu({ nav }: { nav: NavItem[] }) {
   const [open, setOpen] = useState(false);
   const router = useRouter();
   const { user, loading, logout } = useAuth();
+  const supportUser = isSupportUser(user);
+  const unreadNotifications = useUnreadNotificationsCount(
+    user && !supportUser ? user.id : null,
+  );
 
   const panelRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -159,8 +165,8 @@ export function MobileMenu({ nav }: { nav: NavItem[] }) {
                 className="flex flex-col gap-1 px-3 py-4"
                 aria-label="Navigation principale"
               >
-                {nav.map((item) => (
-                  <a
+              {nav.map((item) => (
+                <a
                     key={item.href}
                     href={item.href}
                     onClick={close}
@@ -174,6 +180,42 @@ export function MobileMenu({ nav }: { nav: NavItem[] }) {
                     />
                   </a>
                 ))}
+
+                {user && !supportUser ? (
+                  <>
+                    <Link
+                      href="/notifications"
+                      onClick={close}
+                      className="flex items-center justify-between rounded-xl px-3 py-3 text-base font-medium text-anthracite/85 transition-colors hover:bg-idf-interaction/10 hover:text-idf-interaction focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-idf-focus"
+                    >
+                      <span>Notifications</span>
+                      <span className="flex items-center gap-2">
+                        {unreadNotifications > 0 ? (
+                          <span className="inline-flex min-h-5 min-w-5 items-center justify-center rounded-full bg-danger px-1 text-[11px] font-bold leading-none text-white">
+                            {unreadNotifications > 9 ? "9+" : unreadNotifications}
+                          </span>
+                        ) : null}
+                        <BellIcon
+                          width={18}
+                          height={18}
+                          className="text-anthracite/30"
+                        />
+                      </span>
+                    </Link>
+                    <Link
+                      href="/messages"
+                      onClick={close}
+                      className="flex items-center justify-between rounded-xl px-3 py-3 text-base font-medium text-anthracite/85 transition-colors hover:bg-idf-interaction/10 hover:text-idf-interaction focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-idf-focus"
+                    >
+                      Messages
+                      <MessageSquareIcon
+                        width={18}
+                        height={18}
+                        className="text-anthracite/30"
+                      />
+                    </Link>
+                  </>
+                ) : null}
               </nav>
 
               <div className="mt-auto border-t border-anthracite/10 px-5 py-5">
