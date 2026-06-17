@@ -105,7 +105,7 @@ export function MobileMenu({ nav }: { nav: NavItem[] }) {
         ref={triggerRef}
         type="button"
         onClick={() => setOpen(true)}
-        className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-border bg-surface text-anthracite/80 transition-colors hover:text-idf-interaction focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-idf-focus lg:hidden"
+        className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-border bg-surface text-anthracite/80 transition-colors hover:text-idf-interaction focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-idf-focus xl:hidden"
         aria-label="Ouvrir le menu"
         aria-haspopup="dialog"
         aria-expanded={open}
@@ -122,7 +122,7 @@ export function MobileMenu({ nav }: { nav: NavItem[] }) {
       {mounted &&
         createPortal(
           <div
-            className={`fixed inset-0 z-[60] overflow-hidden lg:hidden ${
+            className={`fixed inset-0 z-[60] overflow-hidden xl:hidden ${
               open ? "" : "pointer-events-none"
             }`}
           >
