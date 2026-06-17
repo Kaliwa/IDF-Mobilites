@@ -46,14 +46,20 @@ class PrimClient
                 continue;
             }
 
-            $text = $this->extractShortMessage($message['Content']['Message'] ?? []);
+            $text = $this->extractMessage($message['Content']['Message'] ?? [], 'SHORT_MESSAGE');
+            if ('' === $text) {
+                $text = $this->extractMessage($message['Content']['Message'] ?? [], 'LONG_MESSAGE');
+            }
             if ('' === $text) {
                 continue;
             }
 
+            $detail = $this->extractMessage($message['Content']['Message'] ?? [], 'LONG_MESSAGE');
+
             $disruptions[] = [
                 'id' => $id,
                 'text' => $text,
+                'detail' => $detail !== '' && $detail !== $text ? $detail : null,
                 'validUntil' => isset($message['ValidUntilTime'])
                     ? new \DateTimeImmutable((string) $message['ValidUntilTime'])
                     : null,
@@ -67,14 +73,14 @@ class PrimClient
     /**
      * @param list<array{MessageType:string,MessageText:array{value:string}}> $messages
      */
-    private function extractShortMessage(array $messages): string
+    private function extractMessage(array $messages, string $type): string
     {
         foreach ($messages as $msg) {
-            if ('SHORT_MESSAGE' === ($msg['MessageType'] ?? '')) {
+            if ($type === ($msg['MessageType'] ?? '')) {
                 return (string) ($msg['MessageText']['value'] ?? '');
             }
         }
 
-        return (string) ($messages[0]['MessageText']['value'] ?? '');
+        return '';
     }
 }
