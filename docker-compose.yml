@@ -19,7 +19,7 @@ services:
   api:
     build:
       context: ./apps/api
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     container_name: idf-mobilites-api
     depends_on:
       postgres:
@@ -62,7 +62,7 @@ services:
   web:
     build:
       context: ./apps/web
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     container_name: idf-mobilites-web
     depends_on:
       - api

@@ -1,0 +1,96 @@
+databases:
+  - name: idf-mobilites-db
+    plan: free
+    databaseName: idf_mobilites
+    user: idf_mobilites
+
+services:
+  - type: web
+    name: idf-mobilites-mercure
+    runtime: image
+    plan: free
+    image:
+      url: docker.io/dunglas/mercure:v0.16
+    healthCheckPath: /healthz
+    envVars:
+      - key: SERVER_NAME
+        value: ":10000"
+      - key: MERCURE_PUBLISHER_JWT_KEY
+        generateValue: true
+      - key: MERCURE_SUBSCRIBER_JWT_KEY
+        fromService:
+          type: web
+          name: idf-mobilites-mercure
+          envVarKey: MERCURE_PUBLISHER_JWT_KEY
+      - key: MERCURE_EXTRA_DIRECTIVES
+        value: |
+          cors_origins *
+          heartbeat 2s
+          anonymous
+
+  - type: web
+    name: idf-mobilites-api
+    runtime: docker
+    plan: free
+    dockerfilePath: ./apps/api/Dockerfile
+    dockerContext: ./apps/api
+    healthCheckPath: /api/health
+    envVars:
+      - key: APP_ENV
+        value: prod
+      - key: APP_DEBUG
+        value: "0"
+      - key: APP_SECRET
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: idf-mobilites-db
+          property: connectionString
+      - key: CORS_ALLOW_ORIGIN
+        value: '^https://.*\.onrender\.com$'
+      - key: MERCURE_JWT_SECRET
+        fromService:
+          type: web
+          name: idf-mobilites-mercure
+          envVarKey: MERCURE_PUBLISHER_JWT_KEY
+      - key: MERCURE_HOSTPORT
+        fromService:
+          type: web
+          name: idf-mobilites-mercure
+          property: hostport
+      - key: MERCURE_PUBLIC_BASE_URL
+        fromService:
+          type: web
+          name: idf-mobilites-mercure
+          envVarKey: RENDER_EXTERNAL_URL
+      - key: IDFM_API_KEY
+        sync: false
+      - key: PRIM_API_TOKEN
+        sync: false
+      - key: IDFM_API_URL
+        value: https://prim.iledefrance-mobilites.fr/marketplace
+      - key: PRIM_NAVITIA_URL
+        value: https://prim.iledefrance-mobilites.fr/marketplace/v2/navitia
+      - key: OSRM_URL
+        value: https://router.project-osrm.org/route/v1/driving
+      - key: JUSTIF_ORG_NAME
+        value: Île-de-France Mobilités
+
+  - type: web
+    name: idf-mobilites-web
+    runtime: docker
+    plan: free
+    dockerfilePath: ./apps/web/Dockerfile
+    dockerContext: ./apps/web
+    healthCheckPath: /
+    envVars:
+      - key: NEXT_PUBLIC_API_URL
+        fromService:
+          type: web
+          name: idf-mobilites-api
+          envVarKey: RENDER_EXTERNAL_URL
+      - key: NEXT_PUBLIC_MERCURE_URL
+        fromService:
+          type: web
+          name: idf-mobilites-mercure
+          envVarKey: RENDER_EXTERNAL_URL
