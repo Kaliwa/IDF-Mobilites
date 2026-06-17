@@ -2,7 +2,7 @@
 
 namespace App\Service;
 
-use App\Entity\Forfait;
+use App\Entity\Abonnement;
 use App\Entity\LineSubscription;
 use App\Entity\Payment;
 use App\Entity\SupportConversation;
@@ -66,29 +66,28 @@ class UserNotificationManager
         return $notification;
     }
 
-    public function notifyForfaitExpiry(Forfait $forfait): ?UserNotification
+    public function notifyAbonnementExpiry(Abonnement $abonnement): ?UserNotification
     {
-        $user = $forfait->getUser();
+        $user = $abonnement->getBeneficiaire();
         if (!$user instanceof User) {
             return null;
         }
 
-        $expiresAt = $forfait->getExpiresAt() ?? new \DateTimeImmutable();
-        $daysLeft = max(0, (int) (new \DateTimeImmutable())->diff($expiresAt)->days);
+        $dateFin = $abonnement->getDateFin() ?? new \DateTimeImmutable();
+        $daysLeft = max(0, (int) (new \DateTimeImmutable())->diff($dateFin)->days);
 
         $notification = (new UserNotification())
             ->setUser($user)
-            ->setTitle('Échéance de votre forfait')
+            ->setTitle('Échéance de votre abonnement')
             ->setBody(sprintf(
-                'Votre forfait "%s" expire dans %d jour%s. Renouvelez-le pour éviter toute interruption de service.',
-                (string) $forfait->getLabel(),
+                'Votre abonnement expire dans %d jour%s. Renouvelez-le pour éviter toute interruption de service.',
                 $daysLeft,
                 1 !== $daysLeft ? 's' : '',
             ))
             ->setCategory('renewal')
             ->setPriority($daysLeft <= 2 ? 'high' : 'medium')
             ->setIsRead(false)
-            ->setActionLabel('Renouveler mon forfait')
+            ->setActionLabel('Renouveler mon abonnement')
             ->setCreatedAt(new \DateTimeImmutable());
 
         $this->entityManager->persist($notification);
@@ -103,7 +102,7 @@ class UserNotificationManager
             return null;
         }
 
-        $label = $payment->getForfait()?->getLabel() ?? 'abonnement';
+        $label = $payment->getAbonnement()?->getTypeOffre() ?? 'abonnement';
 
         $notification = (new UserNotification())
             ->setUser($user)

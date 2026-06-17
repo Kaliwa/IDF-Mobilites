@@ -2,13 +2,15 @@
 
 namespace App\Service;
 
-use App\Entity\Forfait;
+use App\Entity\Abonnement;
 use App\Entity\LineSubscription;
 use App\Entity\Payment;
 use App\Entity\SupportConversation;
 use App\Entity\SupportMessage;
 use App\Entity\TransitLine;
 use App\Entity\User;
+use App\Enum\Periodicite;
+use App\Enum\StatutAbonnement;
 use Doctrine\ORM\EntityManagerInterface;
 
 class MessagingBootstrapper
@@ -31,8 +33,8 @@ class MessagingBootstrapper
             $this->seedConversations($user);
         }
 
-        if (0 === (int) $this->entityManager->getRepository(Forfait::class)->count(['user' => $user])) {
-            $this->seedForfaitAndPayment($user);
+        if (0 === (int) $this->entityManager->getRepository(Abonnement::class)->count(['beneficiaire' => $user])) {
+            $this->seedAbonnementAndPayment($user);
         }
 
         $this->entityManager->flush();
@@ -99,20 +101,23 @@ class MessagingBootstrapper
         }
     }
 
-    private function seedForfaitAndPayment(User $user): void
+    private function seedAbonnementAndPayment(User $user): void
     {
-        $forfait = (new Forfait())
-            ->setUser($user)
-            ->setLabel('Navigo Mois')
-            ->setPrice('86.40')
-            ->setExpiresAt(new \DateTimeImmutable('+5 days'));
+        $abonnement = (new Abonnement())
+            ->setBeneficiaire($user)
+            ->setTypeOffre('navigo_mois')
+            ->setMontant('86.40')
+            ->setPeriodicite(Periodicite::MENSUEL)
+            ->setStatut(StatutAbonnement::ACTIF)
+            ->setDateDebut(new \DateTimeImmutable('-30 days'))
+            ->setDateFin(new \DateTimeImmutable('+5 days'));
 
-        $this->entityManager->persist($forfait);
+        $this->entityManager->persist($abonnement);
 
-        // A recent failed payment on this forfait — will trigger a payment notification
+        // A recent failed payment — will trigger a payment notification
         $failed = (new Payment())
             ->setUser($user)
-            ->setForfait($forfait)
+            ->setAbonnement($abonnement)
             ->setAmount('86.40')
             ->setStatus('failed')
             ->setProcessedAt(new \DateTimeImmutable('-1 day'));
@@ -122,7 +127,7 @@ class MessagingBootstrapper
         // A past successful payment for historical context
         $paid = (new Payment())
             ->setUser($user)
-            ->setForfait($forfait)
+            ->setAbonnement($abonnement)
             ->setAmount('86.40')
             ->setStatus('paid')
             ->setProcessedAt(new \DateTimeImmutable('-32 days'));

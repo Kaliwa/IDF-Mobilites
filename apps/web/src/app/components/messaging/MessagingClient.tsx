@@ -23,8 +23,6 @@ import {
 } from "../../lib/messaging-api";
 import { BellIcon, CheckIcon, ClockIcon } from "../home/icons";
 
-const CHANNELS = ["inApp", "email", "push"];
-
 export function MessagingClient() {
   const { user, loading: authLoading } = useAuth();
   const [overview, setOverview] = useState<MessagingOverview | null>(null);
@@ -147,24 +145,6 @@ export function MessagingClient() {
     replaceSubscription(result.data?.subscription ?? null);
   }
 
-  async function handleToggleChannel(
-    subscription: MessagingSubscription,
-    channel: string,
-  ) {
-    const channels = subscription.channels.includes(channel)
-      ? subscription.channels.filter((item) => item !== channel)
-      : [...subscription.channels, channel];
-
-    const result = await updateSubscription(subscription.id, { channels });
-
-    if (result.error) {
-      setError(result.error);
-      return;
-    }
-
-    replaceSubscription(result.data?.subscription ?? null);
-  }
-
   function replaceSubscription(subscription: MessagingSubscription | null) {
     if (!subscription) {
       return;
@@ -256,9 +236,12 @@ export function MessagingClient() {
           fait depuis l&apos;interface support dédiée.
         </p>
         <div className="mt-5">
-          <Link href="/support/inbox" className={btnPrimary}>
+          <a
+            href={`${process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000"}/admin`}
+            className={btnPrimary}
+          >
             Ouvrir l&apos;espace support
-          </Link>
+          </a>
         </div>
       </section>
     );
@@ -384,40 +367,12 @@ export function MessagingClient() {
               {overview.subscriptions.map((subscription) => (
                 <article key={subscription.id} className={`${glassTile} p-5`}>
                   <div className="flex items-start justify-between gap-4">
-                    <div>
-                      <h4 className="text-lg font-semibold text-anthracite">
-                        {subscription.line.name}
-                      </h4>
-                      <p className="text-sm text-muted">{subscription.line.code}</p>
-                    </div>
+                    <h4 className="text-lg font-semibold text-anthracite">
+                      {subscription.line.name}
+                    </h4>
                     <span className={chip}>
                       {subscription.enabled ? "Suivie" : "En pause"}
                     </span>
-                  </div>
-
-                  <div className="mt-4 flex flex-wrap gap-2">
-                    {CHANNELS.map((channel) => {
-                      const active = subscription.channels.includes(channel);
-
-                      return (
-                        <label
-                          key={channel}
-                          className={`inline-flex cursor-pointer items-center gap-2 rounded-full border px-3 py-1.5 text-sm ${
-                            active
-                              ? "border-idf-interaction/35 bg-idf-interaction/10 text-idf-focus"
-                              : "border-anthracite/10 bg-white/60 text-muted"
-                          }`}
-                        >
-                          <input
-                            type="checkbox"
-                            className="shrink-0 accent-[var(--color-accent)]"
-                            checked={active}
-                            onChange={() => void handleToggleChannel(subscription, channel)}
-                          />
-                          <span className="break-words">{channel}</span>
-                        </label>
-                      );
-                    })}
                   </div>
 
                   <button
@@ -454,10 +409,7 @@ export function MessagingClient() {
                     key={line.id}
                     className="flex items-center justify-between gap-4 rounded-2xl border border-white/60 bg-white/45 px-4 py-3"
                   >
-                    <div>
-                      <p className="font-semibold text-anthracite">{line.name}</p>
-                      <p className="text-xs text-muted">{line.code}</p>
-                    </div>
+                    <p className="font-semibold text-anthracite">{line.name}</p>
                     <button
                       type="button"
                       disabled={subscribing === line.id}

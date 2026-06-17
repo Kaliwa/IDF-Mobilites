@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { type FormEvent, useEffect, useRef, useState } from "react";
 import { isSupportUser } from "../../lib/auth";
 import { useAuth } from "../../lib/auth-context";
@@ -135,9 +134,12 @@ export function MessagesClient() {
           boîte support dédiée.
         </p>
         <div className="mt-5">
-          <Link href="/support/inbox" className={btnPrimary}>
+          <a
+            href={`${process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000"}/admin`}
+            className={btnPrimary}
+          >
             Ouvrir l&apos;espace support
-          </Link>
+          </a>
         </div>
       </section>
     );

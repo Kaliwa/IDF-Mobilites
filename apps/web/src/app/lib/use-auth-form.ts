@@ -58,7 +58,11 @@ export function useAuthForm(endpoint: "login" | "register", fallbackError: strin
         }
 
         const roles = (meData as MeResponse).user.roles;
-        router.push(hasSupportAccess(roles) ? "/support/inbox" : "/");
+        if (hasSupportAccess(roles)) {
+          window.location.href = `${process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000"}/admin`;
+        } else {
+          router.push("/");
+        }
       } else {
         router.push("/");
       }

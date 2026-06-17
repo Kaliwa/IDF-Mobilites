@@ -53,6 +53,11 @@ class Payeur
         $this->beneficiaires = new ArrayCollection();
     }
 
+    public function __toString(): string
+    {
+        return sprintf('%s %s', $this->prenom ?? '', $this->nom ?? '');
+    }
+
     public function getId(): ?int
     {
         return $this->id;

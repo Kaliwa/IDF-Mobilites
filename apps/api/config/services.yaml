@@ -47,3 +47,78 @@ services:
             $apiKey: '%env(PRIM_API_TOKEN)%'
             $navitiaBaseUrl: '%env(default::PRIM_NAVITIA_URL)%'
             $osrmUrl: '%env(default::OSRM_URL)%'
+
+    # SonataAdmin — Admin classes
+    App\Admin\UserAdmin:
+        arguments:
+            $passwordHasher: '@security.user_password_hasher'
+        tags:
+            - name: sonata.admin
+              model_class: App\Entity\User
+              manager_type: orm
+              group: 'Utilisateurs'
+              label: 'Utilisateurs'
+
+    App\Admin\AbonnementAdmin:
+        tags:
+            - name: sonata.admin
+              model_class: App\Entity\Abonnement
+              manager_type: orm
+              group: 'Abonnements'
+              label: 'Abonnements'
+
+    App\Admin\PaymentAdmin:
+        tags:
+            - name: sonata.admin
+              model_class: App\Entity\Payment
+              manager_type: orm
+              group: 'Abonnements'
+              label: 'Paiements'
+
+    App\Admin\PayeurAdmin:
+        tags:
+            - name: sonata.admin
+              model_class: App\Entity\Payeur
+              manager_type: orm
+              group: 'Abonnements'
+              label: 'Payeurs'
+
+    App\Admin\ContractAdmin:
+        tags:
+            - name: sonata.admin
+              model_class: App\Entity\Contract
+              manager_type: orm
+              group: 'Documents'
+              label: 'Contrats'
+
+    App\Admin\SubscriptionDossierAdmin:
+        tags:
+            - name: sonata.admin
+              model_class: App\Entity\SubscriptionDossier
+              manager_type: orm
+              group: 'Documents'
+              label: 'Dossiers'
+
+    App\Admin\TransitLineAdmin:
+        tags:
+            - name: sonata.admin
+              model_class: App\Entity\TransitLine
+              manager_type: orm
+              group: 'Transport'
+              label: 'Lignes'
+
+    App\Admin\SupportConversationAdmin:
+        tags:
+            - name: sonata.admin
+              model_class: App\Entity\SupportConversation
+              manager_type: orm
+              group: 'Support'
+              label: 'Conversations'
+
+    App\Admin\SupportAccountRequestAdmin:
+        tags:
+            - name: sonata.admin
+              model_class: App\Entity\SupportAccountRequest
+              manager_type: orm
+              group: 'Support'
+              label: 'Demandes de compte'

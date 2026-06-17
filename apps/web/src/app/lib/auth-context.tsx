@@ -8,11 +8,13 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import {
   API_BASE_URL,
   AuthUser,
   MeResponse,
   getStoredToken,
+  hasSupportAccess,
   readJson,
   setStoredToken,
 } from "./auth";
@@ -85,9 +87,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <AuthContext.Provider value={{ user, loading, logout }}>
+      <SupportGuard user={user} loading={loading} />
       {children}
     </AuthContext.Provider>
   );
+}
+
+function SupportGuard({ user, loading }: { user: AuthUser | null; loading: boolean }) {
+  const router = useRouter();
+  const pathname = usePathname();
+
+  useEffect(() => {
+    if (loading) return;
+    if (!user) return;
+    if (!hasSupportAccess(user.roles)) return;
+    if (pathname.startsWith("/support")) return;
+    window.location.href = `${process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000"}/admin`;
+  }, [loading, user, pathname, router]);
+
+  return null;
 }
 
 export const useAuth = () => useContext(AuthContext);

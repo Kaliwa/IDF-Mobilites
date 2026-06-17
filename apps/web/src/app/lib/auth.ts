@@ -36,8 +36,19 @@ export function isSupportUser(user: AuthUser | null): boolean {
 export const TOKEN_STORAGE_KEY = "idf-mobilites.jwt";
 export const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
-export const MERCURE_PUBLIC_URL =
-  process.env.NEXT_PUBLIC_MERCURE_URL ?? "http://localhost:3001/.well-known/mercure";
+
+function resolveMercurePublicUrl(): string {
+  const configured =
+    process.env.NEXT_PUBLIC_MERCURE_URL ?? "http://localhost:3001";
+
+  if (configured.endsWith("/.well-known/mercure")) {
+    return configured;
+  }
+
+  return `${configured.replace(/\/$/, "")}/.well-known/mercure`;
+}
+
+export const MERCURE_PUBLIC_URL = resolveMercurePublicUrl();
 
 export async function readJson<T>(response: Response): Promise<T | null> {
   const text = await response.text();
