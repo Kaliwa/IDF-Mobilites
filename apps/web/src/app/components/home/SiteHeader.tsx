@@ -14,6 +14,11 @@ const NAV = [
   { href: "/#forfaits", label: "Titres & tarifs" },
   { href: "/#acces", label: "Services" },
   { href: "/#aide", label: "Aide" },
+  { href: "/trajets", label: "Mes trajets" },
+  { href: "#forfaits", label: "Titres & tarifs" },
+  { href: "#acces", label: "Services" },
+  { href: "#reseau", label: "Le réseau" },
+  { href: "#aide", label: "Aide" },
 ];
 
 export function SiteHeader() {
@@ -41,13 +46,13 @@ export function SiteHeader() {
           aria-label="Navigation principale"
         >
           {NAV.map((item) => (
-            <a
+            <Link
               key={item.href}
               href={item.href}
               className="shrink-0 font-medium text-anthracite/80 transition-colors hover:text-idf-interaction"
             >
               {item.label}
-            </a>
+            </Link>
           ))}
         </nav>
 

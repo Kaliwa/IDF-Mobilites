@@ -1,3 +1,4 @@
+@import url("leaflet/dist/leaflet.css");
 @import "tailwindcss";
 
 :root {
@@ -145,6 +146,14 @@
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* Keep address autocomplete above the Leaflet map in the trip form */
+.trip-map.leaflet-container,
+.trip-map .leaflet-pane,
+.trip-map .leaflet-top,
+.trip-map .leaflet-bottom {
+  z-index: 1 !important;
 }
 
 .rise-in {

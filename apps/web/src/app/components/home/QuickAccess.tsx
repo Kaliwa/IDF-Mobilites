@@ -23,9 +23,9 @@ const ITEMS: Access[] = [
     Icon: CompassIcon,
   },
   {
-    title: "Mes attestations",
-    text: "Téléchargez vos attestations et justificatifs en quelques clics.",
-    href: "#",
+    title: "Mes trajets",
+    text: "Consultez vos trajets enregistrés, vérifiez les incidents et téléchargez vos justificatifs.",
+    href: "/trajets",
     Icon: DocumentIcon,
   },
   {

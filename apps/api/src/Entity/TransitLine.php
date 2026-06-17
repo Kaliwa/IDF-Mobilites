@@ -2,9 +2,10 @@
 
 namespace App\Entity;
 
+use App\Repository\TransitLineRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: TransitLineRepository::class)]
 #[ORM\Table(name: 'transit_line')]
 #[ORM\UniqueConstraint(name: 'uniq_transit_line_code', fields: ['code'])]
 class TransitLine
