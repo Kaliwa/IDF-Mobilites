@@ -66,15 +66,6 @@ export default function LoginPage() {
           </Link>
         </p>
 
-        <p className="text-sm text-muted">
-          Vous faites partie des équipes internes ?{" "}
-          <Link
-            href="/support/login"
-            className="font-semibold text-idf-interaction hover:text-idf-focus"
-          >
-            Accéder à l&apos;espace support
-          </Link>
-        </p>
       </div>
     </AuthShell>
   );

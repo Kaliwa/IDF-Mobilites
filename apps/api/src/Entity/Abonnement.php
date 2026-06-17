@@ -55,6 +55,14 @@ class Abonnement
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?Payeur $payeur = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $renewalNotifiedAt = null;
+
+    public function __toString(): string
+    {
+        return sprintf('%s (%s)', $this->typeOffre ?? 'N/A', $this->beneficiaire?->getEmail() ?? '');
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -152,6 +160,18 @@ class Abonnement
     public function setPayeur(?Payeur $payeur): static
     {
         $this->payeur = $payeur;
+
+        return $this;
+    }
+
+    public function getRenewalNotifiedAt(): ?\DateTimeImmutable
+    {
+        return $this->renewalNotifiedAt;
+    }
+
+    public function setRenewalNotifiedAt(?\DateTimeImmutable $renewalNotifiedAt): static
+    {
+        $this->renewalNotifiedAt = $renewalNotifiedAt;
 
         return $this;
     }

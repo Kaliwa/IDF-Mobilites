@@ -25,6 +25,11 @@ class TransitLine
     #[ORM\Column(length: 80, nullable: true)]
     private ?string $primRef = null;
 
+    public function __toString(): string
+    {
+        return sprintf('%s — %s', $this->code ?? '', $this->name ?? '');
+    }
+
     public function getId(): ?int
     {
         return $this->id;

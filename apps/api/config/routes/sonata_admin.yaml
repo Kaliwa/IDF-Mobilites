@@ -1,0 +1,18 @@
+_sonata_admin:
+    resource: '@SonataAdminBundle/Resources/config/routing/sonata_admin.php'
+    prefix: /admin
+
+_sonata_admin_pool:
+    resource: .
+    type: sonata_admin
+    prefix: /admin
+
+app_admin_login:
+    path: /admin/login
+    controller: App\Controller\AdminLoginController::login
+
+app_admin_login_check:
+    path: /admin/login_check
+
+app_admin_logout:
+    path: /admin/logout

@@ -15,10 +15,6 @@ const NAV = [
   { href: "/#acces", label: "Services" },
   { href: "/#aide", label: "Aide" },
   { href: "/trajets", label: "Mes trajets" },
-  { href: "#forfaits", label: "Titres & tarifs" },
-  { href: "#acces", label: "Services" },
-  { href: "#reseau", label: "Le réseau" },
-  { href: "#aide", label: "Aide" },
 ];
 
 export function SiteHeader() {
