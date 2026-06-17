@@ -24,11 +24,20 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      mercure:
+        condition: service_started
     environment:
       APP_ENV: dev
       APP_DEBUG: "1"
+      APP_SECRET: dev-secret-idf-mobilites
       DATABASE_URL: postgresql://idf_mobilites:idf_mobilites@postgres:5432/idf_mobilites?serverVersion=16&charset=utf8
       CORS_ALLOW_ORIGIN: ^https?://(localhost|127\.0\.0\.1)(:[0-9]+)?$
+      JWT_SECRET_KEY: /app/config/jwt/private.pem
+      JWT_PUBLIC_KEY: /app/config/jwt/public.pem
+      JWT_PASSPHRASE: ""
+      MERCURE_URL: http://mercure/.well-known/mercure
+      MERCURE_PUBLIC_URL: http://localhost:3001/.well-known/mercure
+      MERCURE_JWT_SECRET: "!ChangeThisMercureHubJWTSecretKey!"
     ports:
       - "8000:8000"
     volumes:
@@ -37,7 +46,8 @@ services:
       - api_var:/app/var
     working_dir: /app
     command: >
-      sh -lc "composer install &&
+      sh -lc "if [ ! -f .env ]; then cp .env.example .env; fi &&
+      composer install &&
       php bin/console doctrine:database:create --if-not-exists &&
       if ls migrations/*.php >/dev/null 2>&1; then php bin/console doctrine:migrations:migrate --no-interaction; fi &&
       php -S 0.0.0.0:8000 -t public"
@@ -53,6 +63,7 @@ services:
       NODE_ENV: development
       WATCHPACK_POLLING: "true"
       NEXT_PUBLIC_API_URL: http://localhost:8000
+      NEXT_PUBLIC_MERCURE_URL: http://localhost:3001/.well-known/mercure
       INTERNAL_API_URL: http://api:8000
     ports:
       - "3000:3000"
@@ -64,6 +75,20 @@ services:
     command: >
       sh -lc "pnpm install &&
       pnpm dev --hostname 0.0.0.0 --port 3000"
+
+  mercure:
+    image: dunglas/mercure
+    container_name: idf-mobilites-mercure
+    environment:
+      SERVER_NAME: ":80"
+      MERCURE_PUBLISHER_JWT_KEY: "!ChangeThisMercureHubJWTSecretKey!"
+      MERCURE_SUBSCRIBER_JWT_KEY: "!ChangeThisMercureHubJWTSecretKey!"
+      MERCURE_EXTRA_DIRECTIVES: |
+        cors_origins http://localhost:3000 http://127.0.0.1:3000
+        heartbeat 2s
+        anonymous
+    ports:
+      - "3001:80"
 
 volumes:
   postgres_data:

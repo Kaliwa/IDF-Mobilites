@@ -9,7 +9,7 @@ const STATS = [
 
 export function NetworkStats() {
   return (
-    <section id="reseau" className="mx-auto max-w-6xl px-4 py-14 sm:px-6 scroll-mt-20">
+    <section id="reseau" className="mx-auto w-full max-w-6xl px-4 py-14 sm:px-6 scroll-mt-20">
       <div className={`${glass} overflow-hidden p-8 sm:p-10`}>
         <p className="max-w-2xl text-lg font-medium text-anthracite">
           Le réseau de transport francilien est le 2ᵉ plus dense et fréquenté au monde,

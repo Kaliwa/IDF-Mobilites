@@ -25,9 +25,19 @@ export type MeResponse = {
   user: AuthUser;
 };
 
+export function hasSupportAccess(roles: string[]): boolean {
+  return roles.includes("ROLE_SUPPORT") || roles.includes("ROLE_ADMIN");
+}
+
+export function isSupportUser(user: AuthUser | null): boolean {
+  return !!user && hasSupportAccess(user.roles);
+}
+
 export const TOKEN_STORAGE_KEY = "idf-mobilites.jwt";
 export const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+export const MERCURE_PUBLIC_URL =
+  process.env.NEXT_PUBLIC_MERCURE_URL ?? "http://localhost:3001/.well-known/mercure";
 
 export async function readJson<T>(response: Response): Promise<T | null> {
   const text = await response.text();
