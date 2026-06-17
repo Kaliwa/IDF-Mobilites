@@ -1,6 +1,7 @@
 import { AuthProvider } from "./lib/auth-context";
 import { SiteHeader } from "./components/home/SiteHeader";
 import { Hero } from "./components/home/Hero";
+import { OrientationBanner } from "./components/home/OrientationBanner";
 import { QuickAccess } from "./components/home/QuickAccess";
 import { Forfaits } from "./components/home/Forfaits";
 import { NetworkStats } from "./components/home/NetworkStats";
@@ -14,6 +15,7 @@ export default function HomePage() {
         <SiteHeader />
         <main className="flex-1">
           <Hero />
+          <OrientationBanner />
           <JourneySection />
           <QuickAccess />
           <Forfaits />
