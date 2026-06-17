@@ -17,9 +17,9 @@ class Payment
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private ?User $user = null;
 
-    #[ORM\ManyToOne(targetEntity: Forfait::class)]
+    #[ORM\ManyToOne(targetEntity: Abonnement::class)]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
-    private ?Forfait $forfait = null;
+    private ?Abonnement $abonnement = null;
 
     #[ORM\Column(type: 'decimal', precision: 8, scale: 2)]
     private ?string $amount = null;
@@ -34,80 +34,23 @@ class Payment
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $failureNotifiedAt = null;
 
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
+    public function getId(): ?int { return $this->id; }
 
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
+    public function getUser(): ?User { return $this->user; }
+    public function setUser(User $user): static { $this->user = $user; return $this; }
 
-    public function setUser(User $user): static
-    {
-        $this->user = $user;
+    public function getAbonnement(): ?Abonnement { return $this->abonnement; }
+    public function setAbonnement(?Abonnement $abonnement): static { $this->abonnement = $abonnement; return $this; }
 
-        return $this;
-    }
+    public function getAmount(): ?string { return $this->amount; }
+    public function setAmount(string $amount): static { $this->amount = $amount; return $this; }
 
-    public function getForfait(): ?Forfait
-    {
-        return $this->forfait;
-    }
+    public function getStatus(): ?string { return $this->status; }
+    public function setStatus(string $status): static { $this->status = $status; return $this; }
 
-    public function setForfait(?Forfait $forfait): static
-    {
-        $this->forfait = $forfait;
+    public function getProcessedAt(): ?\DateTimeImmutable { return $this->processedAt; }
+    public function setProcessedAt(\DateTimeImmutable $processedAt): static { $this->processedAt = $processedAt; return $this; }
 
-        return $this;
-    }
-
-    public function getAmount(): ?string
-    {
-        return $this->amount;
-    }
-
-    public function setAmount(string $amount): static
-    {
-        $this->amount = $amount;
-
-        return $this;
-    }
-
-    public function getStatus(): ?string
-    {
-        return $this->status;
-    }
-
-    public function setStatus(string $status): static
-    {
-        $this->status = $status;
-
-        return $this;
-    }
-
-    public function getProcessedAt(): ?\DateTimeImmutable
-    {
-        return $this->processedAt;
-    }
-
-    public function setProcessedAt(\DateTimeImmutable $processedAt): static
-    {
-        $this->processedAt = $processedAt;
-
-        return $this;
-    }
-
-    public function getFailureNotifiedAt(): ?\DateTimeImmutable
-    {
-        return $this->failureNotifiedAt;
-    }
-
-    public function setFailureNotifiedAt(?\DateTimeImmutable $failureNotifiedAt): static
-    {
-        $this->failureNotifiedAt = $failureNotifiedAt;
-
-        return $this;
-    }
+    public function getFailureNotifiedAt(): ?\DateTimeImmutable { return $this->failureNotifiedAt; }
+    public function setFailureNotifiedAt(?\DateTimeImmutable $failureNotifiedAt): static { $this->failureNotifiedAt = $failureNotifiedAt; return $this; }
 }

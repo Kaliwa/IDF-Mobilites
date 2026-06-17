@@ -2,7 +2,7 @@
 
 namespace App\Service;
 
-use App\Entity\Forfait;
+use App\Entity\Abonnement;
 use App\Entity\LineSubscription;
 use App\Entity\Payment;
 use App\Entity\User;
@@ -19,7 +19,7 @@ class NotificationsChecker
     }
 
     /**
-     * Run all checks for a single user: forfait expiry, failed payments and line disruptions.
+     * Run all checks for a single user: abonnement expiry, failed payments and line disruptions.
      * Returns newly created notifications (already flushed).
      *
      * @return list<UserNotification>
@@ -28,9 +28,9 @@ class NotificationsChecker
     {
         $created = [];
 
-        foreach ($this->findExpiringForfaits($user) as $forfait) {
-            $notification = $this->notificationManager->notifyForfaitExpiry($forfait);
-            $forfait->setRenewalNotifiedAt(new \DateTimeImmutable());
+        foreach ($this->findExpiringAbonnements($user) as $abonnement) {
+            $notification = $this->notificationManager->notifyAbonnementExpiry($abonnement);
+            $abonnement->setRenewalNotifiedAt(new \DateTimeImmutable());
             if (null !== $notification) {
                 $created[] = $notification;
             }
@@ -127,16 +127,16 @@ class NotificationsChecker
     }
 
     /**
-     * @return list<Forfait>
+     * @return list<Abonnement>
      */
-    private function findExpiringForfaits(User $user): array
+    private function findExpiringAbonnements(User $user): array
     {
-        return $this->entityManager->getRepository(Forfait::class)
-            ->createQueryBuilder('f')
-            ->where('f.user = :user')
-            ->andWhere('f.expiresAt > :now')
-            ->andWhere('f.expiresAt <= :threshold')
-            ->andWhere('f.renewalNotifiedAt IS NULL OR f.renewalNotifiedAt < :weekAgo')
+        return $this->entityManager->getRepository(Abonnement::class)
+            ->createQueryBuilder('a')
+            ->where('a.beneficiaire = :user')
+            ->andWhere('a.dateFin > :now')
+            ->andWhere('a.dateFin <= :threshold')
+            ->andWhere('a.renewalNotifiedAt IS NULL OR a.renewalNotifiedAt < :weekAgo')
             ->setParameter('user', $user)
             ->setParameter('now', new \DateTimeImmutable())
             ->setParameter('threshold', new \DateTimeImmutable('+7 days'))

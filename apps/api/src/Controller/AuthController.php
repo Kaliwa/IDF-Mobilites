@@ -49,17 +49,9 @@ final class AuthController
             return $this->jsonError('An account already exists for this email.', 409);
         }
 
-        $roles = ['ROLE_USER'];
-        if ('admin@comutitres.fr' === $email) {
-            $roles[] = 'ROLE_ADMIN';
-        }
-        if ('support@comutitres.fr' === $email) {
-            $roles[] = 'ROLE_SUPPORT';
-        }
-
         $user = (new User())
             ->setEmail($email)
-            ->setRoles($roles)
+            ->setRoles(['ROLE_USER'])
             ->setCreatedAt(new \DateTimeImmutable());
 
         $hashedPassword = $this->passwordHasher->hashPassword($user, (string) $payload->password);
