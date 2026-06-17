@@ -72,6 +72,7 @@ final class CreateSupportUserCommand extends Command
         $user->setRoles([$role]);
         $hashed = $this->passwordHasher->hashPassword($user, $plainPassword);
         $user->setPassword($hashed);
+        $user->setCreatedAt(new \DateTimeImmutable());
 
         $this->entityManager->persist($user);
         $this->entityManager->flush();
