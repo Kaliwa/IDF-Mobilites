@@ -25,7 +25,7 @@ export function Hero() {
           </p>
 
           <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-            <a href="#forfaits" className={`${btnPrimary} justify-center sm:px-7`}>
+            <a href="/simulateur" className={`${btnPrimary} sm:px-7`}>
               Trouver mon forfait
             </a>
             <a href="#acces" className={`${btnGhost} justify-center`}>

@@ -10,10 +10,10 @@ import { btnGhost, btnPrimary, glassNav } from "../../lib/ui";
 import { BellIcon, MessageSquareIcon, SearchIcon, UserIcon } from "./icons";
 
 const NAV = [
-  { href: "#forfaits", label: "Titres & tarifs" },
-  { href: "#acces", label: "Services" },
-  { href: "#reseau", label: "Le réseau" },
-  { href: "#aide", label: "Aide" },
+  { href: "/simulateur", label: "Simulateur" },
+  { href: "/#forfaits", label: "Titres & tarifs" },
+  { href: "/#acces", label: "Services" },
+  { href: "/#aide", label: "Aide" },
 ];
 
 export function SiteHeader() {
