@@ -14,7 +14,8 @@ COPY composer.json composer.lock symfony.lock ./
 RUN composer install --no-dev --no-scripts --no-interaction --prefer-dist
 
 COPY . .
-RUN composer dump-autoload --optimize --classmap-authoritative \
+RUN cp .env.example .env \
+    && composer dump-autoload --optimize --classmap-authoritative \
     && mkdir -p var/cache var/log config/jwt \
     && chmod -R 777 var
 
