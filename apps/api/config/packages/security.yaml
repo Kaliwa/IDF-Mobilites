@@ -31,6 +31,7 @@ security:
         - { path: ^/api/login$, roles: PUBLIC_ACCESS }
         - { path: ^/api/register$, roles: PUBLIC_ACCESS }
         - { path: ^/api/health$, roles: PUBLIC_ACCESS }
+        - { path: ^/api/orientation, roles: PUBLIC_ACCESS }
         - { path: ^/api/docs, roles: PUBLIC_ACCESS }
         - { path: ^/api/(contexts|errors|validation_errors|\.well-known/genid), roles: PUBLIC_ACCESS }
         - { path: ^/api$, roles: PUBLIC_ACCESS, methods: [GET, HEAD] }

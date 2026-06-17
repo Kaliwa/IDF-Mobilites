@@ -56,6 +56,12 @@ docker compose logs -f
 - API docs : http://localhost:8000/api
 - PostgreSQL : localhost:5433
 
+## Fonctionnalites
+
+- [Orientation par evenements de vie](docs/ORIENTATION.md) : parcours guide
+  (arbre de decision configurable) vers une offre + aides, avec verification
+  d'eligibilite hybride (FranceConnect / API Particulier ou justificatif).
+
 ## Notes
 
 - Le conteneur `api` installe les dépendances Composer puis cree la base si besoin au demarrage.
