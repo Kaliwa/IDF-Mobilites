@@ -13,6 +13,7 @@ const NAV = [
   { href: "/simulateur", label: "Simulateur" },
   { href: "/#forfaits", label: "Titres & tarifs" },
   { href: "/#acces", label: "Services" },
+  { href: "/#reseau", label: "Le réseau" },
   { href: "/#aide", label: "Aide" },
   { href: "/trajets", label: "Mes trajets" },
 ];
@@ -33,12 +34,16 @@ export function SiteHeader() {
   return (
     <header className={`${glassNav} overflow-x-clip`}>
       <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-2 px-4 py-3 sm:px-6 lg:gap-4">
-        <Link href="/" aria-label="Accueil Comutitres" className="min-w-0 flex-1">
+        <Link
+          href="/"
+          aria-label="Accueil Comutitres"
+          className="min-w-0 flex-1 lg:flex-none"
+        >
           <Brand tone="dark" compact />
         </Link>
 
         <nav
-          className="hidden items-center gap-7 text-sm lg:flex lg:justify-center"
+          className="hidden items-center gap-7 text-sm lg:flex lg:justify-center lg:ml-10 xl:ml-16"
           aria-label="Navigation principale"
         >
           {NAV.map((item) => (
@@ -57,7 +62,7 @@ export function SiteHeader() {
             <>
               <Link
                 href="/notifications"
-                className="relative inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-anthracite/10 bg-white/50 text-anthracite/70 transition-colors hover:text-idf-interaction"
+                className="relative inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-border bg-surface text-anthracite/70 transition-colors hover:border-idf-interaction hover:text-idf-interaction"
                 aria-label="Ouvrir les notifications"
               >
                 <BellIcon width={18} height={18} />
@@ -69,7 +74,7 @@ export function SiteHeader() {
               </Link>
               <Link
                 href="/messages"
-                className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-anthracite/10 bg-white/50 text-anthracite/70 transition-colors hover:text-idf-interaction"
+                className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-border bg-surface text-anthracite/70 transition-colors hover:border-idf-interaction hover:text-idf-interaction"
                 aria-label="Ouvrir les messages"
               >
                 <MessageSquareIcon width={18} height={18} />
@@ -79,7 +84,7 @@ export function SiteHeader() {
 
           <button
             type="button"
-            className="hidden h-10 w-10 items-center justify-center rounded-xl border border-anthracite/10 bg-white/50 text-anthracite/70 transition-colors hover:text-idf-interaction lg:inline-flex"
+            className="hidden h-10 w-10 items-center justify-center rounded-lg border border-border bg-surface text-anthracite/70 transition-colors hover:border-idf-interaction hover:text-idf-interaction lg:inline-flex"
             aria-label="Rechercher"
           >
             <SearchIcon width={18} height={18} />
@@ -87,7 +92,7 @@ export function SiteHeader() {
 
           {loading ? (
             <span
-              className="hidden h-10 w-28 animate-pulse rounded-xl bg-white/50 lg:block"
+              className="hidden h-10 w-28 animate-pulse rounded-lg bg-border/60 lg:block"
               aria-hidden="true"
             />
           ) : user ? (

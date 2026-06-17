@@ -134,7 +134,7 @@ export function Forfaits() {
         </div>
 
         <div
-          className="grid grid-cols-1 gap-1 rounded-3xl border border-white/60 bg-white/35 p-1 backdrop-blur-xl sm:grid-cols-2 lg:inline-flex lg:flex-wrap"
+          className="grid grid-cols-1 gap-1 rounded-lg border border-border bg-surface p-1 sm:grid-cols-2 lg:inline-flex lg:flex-wrap"
           role="tablist"
           aria-label="Type de trajet"
         >
@@ -147,9 +147,9 @@ export function Forfaits() {
                 role="tab"
                 aria-selected={isActive}
                 onClick={() => setActive(item.key)}
-                className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
+                className={`rounded-md px-4 py-2 text-sm font-semibold transition-colors ${
                   isActive
-                    ? "bg-gradient-to-br from-idf-interaction to-idf-focus text-white shadow-[0_10px_22px_-12px_rgba(0,80,170,0.7)]"
+                    ? "bg-idf-interaction text-white"
                     : "text-gray-dark hover:text-idf-interaction"
                 }`}
               >
