@@ -10,7 +10,6 @@ final class IdfmRouteService
         private readonly HttpClientInterface $httpClient,
         private readonly ?string $apiKey = null,
         private readonly ?string $navitiaBaseUrl = null,
-        private readonly ?string $osrmUrl = null,
     ) {
     }
 
@@ -21,12 +20,7 @@ final class IdfmRouteService
      */
     public function suggest(array $origin, array $destination): array
     {
-        $navitia = $this->tryNavitia($origin, $destination);
-        if ($navitia !== null && count($navitia) > 0) {
-            return $navitia;
-        }
-
-        return $this->fallbackOsrm($origin, $destination);
+        return $this->tryNavitia($origin, $destination) ?? [];
     }
 
     /**
@@ -42,7 +36,7 @@ final class IdfmRouteService
 
         try {
             $url = sprintf(
-                '%s/journeys?from=%f;%f&to=%f;%f&max_nb_journeys=3&count=3',
+                '%s/journeys?from=%f;%f&to=%f;%f&max_nb_journeys=8&count=8',
                 rtrim($this->navitiaBaseUrl, '/'),
                 $origin['lng'],
                 $origin['lat'],
@@ -68,10 +62,19 @@ final class IdfmRouteService
         }
 
         $results = [];
-        foreach (array_slice($data['journeys'], 0, 3) as $index => $journey) {
-            $parsed = $this->parseJourney($journey, $index);
-            if ($parsed !== null) {
-                $results[] = $parsed;
+        foreach ($data['journeys'] as $journey) {
+            if (!is_array($journey)) {
+                continue;
+            }
+
+            $parsed = $this->parseJourney($journey, count($results));
+            if ($parsed === null) {
+                continue;
+            }
+
+            $results[] = $parsed;
+            if (count($results) >= 3) {
+                break;
             }
         }
 
@@ -165,6 +168,10 @@ final class IdfmRouteService
 
         if ($totalDistance <= 0 && isset($journey['distances']) && is_array($journey['distances'])) {
             $totalDistance = (float) array_sum(array_map('floatval', $journey['distances']));
+        }
+
+        if ($segments === []) {
+            return null;
         }
 
         return [
@@ -283,61 +290,5 @@ final class IdfmRouteService
         }
 
         return ['lineId' => null, 'primRef' => null];
-    }
-
-    /**
-     * @param array{lat:float,lng:float,name:string} $origin
-     * @param array{lat:float,lng:float,name:string} $destination
-     * @return array<int,array<string,mixed>>
-     */
-    private function fallbackOsrm(array $origin, array $destination): array
-    {
-        $base = $this->osrmUrl ?: 'https://router.project-osrm.org/route/v1/driving';
-        $url = sprintf(
-            '%s/%f,%f;%f,%f?overview=full&geometries=geojson&alternatives=true&steps=false',
-            rtrim($base, '/'),
-            $origin['lng'],
-            $origin['lat'],
-            $destination['lng'],
-            $destination['lat'],
-        );
-
-        try {
-            $response = $this->httpClient->request('GET', $url, ['timeout' => 8.0]);
-            $data = $response->toArray(false);
-        } catch (\Throwable) {
-            return [];
-        }
-
-        $routes = $data['routes'] ?? [];
-        if (!is_array($routes)) {
-            return [];
-        }
-
-        $results = [];
-        foreach (array_slice($routes, 0, 3) as $index => $route) {
-            $coords = [];
-            foreach (($route['geometry']['coordinates'] ?? []) as $pair) {
-                if (is_array($pair) && count($pair) >= 2) {
-                    $coords[] = [(float) $pair[1], (float) $pair[0]];
-                }
-            }
-
-            $distanceKm = isset($route['distance']) ? round(((float) $route['distance']) / 1000, 1) : 0.0;
-            $durationMin = isset($route['duration']) ? (int) round(((float) $route['duration']) / 60) : 0;
-
-            $results[] = [
-                'label' => sprintf('Itinéraire (voiture) %d', $index + 1),
-                'duration' => $durationMin,
-                'distanceKm' => $distanceKm,
-                'lines' => [],
-                'segments' => [],
-                'summary' => 'Itinéraire routier (secours).',
-                'coords' => $coords,
-                'polylines' => [['coords' => $coords, 'color' => '#1972d2']],
-            ];
-        }
-
-        return $results;
     }
 }

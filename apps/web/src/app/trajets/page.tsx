@@ -1,13 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { SiteFooter } from "../components/home/SiteFooter";
 import { SiteHeader } from "../components/home/SiteHeader";
+import { EditJourneyModal } from "../components/trips/EditJourneyModal";
 import { LineBadgeList } from "../components/trips/LineBadge";
 import { AuthProvider } from "../lib/auth-context";
 import { journeyLinesToSegments } from "../lib/line-segments";
-import { useJourneys, formatJourneyLines } from "../lib/use-journeys";
+import { useJourneys, formatJourneyLines, type Journey } from "../lib/use-journeys";
 import { btnGhost, btnPrimary, glass, sectionAccent } from "../lib/ui";
 
 function shortenAddress(value: string, max = 72): string {
@@ -15,10 +16,12 @@ function shortenAddress(value: string, max = 72): string {
 }
 
 function JourneysPageInner() {
+  const [editingJourney, setEditingJourney] = useState<Journey | null>(null);
   const {
     user,
     journeys,
     loadDisruptions,
+    updateJourney,
     disruptions,
     plannedDisruptions,
     canGenerateJustificatif,
@@ -172,6 +175,13 @@ function JourneysPageInner() {
                     <button
                       type="button"
                       className={btnGhost}
+                      onClick={() => setEditingJourney(journey)}
+                    >
+                      Modifier
+                    </button>
+                    <button
+                      type="button"
+                      className={btnGhost}
                       onClick={() => void loadDisruptions(journey.id)}
                       disabled={checking}
                     >
@@ -201,6 +211,19 @@ function JourneysPageInner() {
             })}
           </div>
         </section>
+
+        {editingJourney ? (
+          <EditJourneyModal
+            journey={editingJourney}
+            open
+            saving={loading}
+            onClose={() => setEditingJourney(null)}
+            onSave={async (payload) => {
+              await updateJourney(editingJourney.id, payload);
+              setEditingJourney(null);
+            }}
+          />
+        ) : null}
       </main>
       <SiteFooter />
     </div>
