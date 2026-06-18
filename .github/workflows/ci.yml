@@ -1,0 +1,111 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  # ── Web ──────────────────────────────────────────────────────────────────────
+  web:
+    name: Web — Type check, Lint & Tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/web
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: apps/web/pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Type check
+        run: npx tsc --noEmit
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Tests
+        run: pnpm test
+
+  # ── API — Lint & Validate ────────────────────────────────────────────────────
+  api:
+    name: API — Lint & Validate
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/api
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: intl, pdo_pgsql
+          coverage: none
+
+      - name: Validate composer.json
+        run: composer validate --no-check-publish
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-scripts --no-interaction
+
+      - name: Create .env
+        run: cp .env.example .env
+
+      - name: PHP syntax check
+        run: find src -name "*.php" | xargs php -l | grep -v "No syntax errors" | grep "." && exit 1 || true
+
+      - name: Lint YAML config
+        run: php bin/console lint:yaml config/ --no-debug
+
+      - name: Lint Twig templates
+        run: php bin/console lint:twig templates/ --no-debug
+
+  # ── API — Unit tests ─────────────────────────────────────────────────────────
+  api-tests:
+    name: API — Unit Tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/api
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: intl, pdo_pgsql
+          coverage: none
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-scripts --no-interaction
+
+      - name: Create .env
+        run: cp .env.example .env
+
+      - name: Unit tests
+        run: php vendor/bin/phpunit tests/Unit --no-coverage
+
+  # ── Deploy ───────────────────────────────────────────────────────────────────
+  deploy:
+    name: Deploy to Render
+    runs-on: ubuntu-latest
+    needs: [web, api, api-tests]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Trigger Render deploy hook
+        run: curl -fsSL "${{ secrets.RENDER_DEPLOY_HOOK }}"

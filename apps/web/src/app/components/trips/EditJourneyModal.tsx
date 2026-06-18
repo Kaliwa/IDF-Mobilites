@@ -56,8 +56,10 @@ export function EditJourneyModal({ journey, open, saving = false, onClose, onSav
   const tileUrl = process.env.NEXT_PUBLIC_MAP_TILE_URL;
   const initialSegments = useMemo(() => journeyLinesToSegments(journey.lines), [journey.lines]);
 
+  // Sync form state when the modal reopens with a (possibly different) journey.
   useEffect(() => {
     if (!open) return;
+    /* eslint-disable react-hooks/set-state-in-effect */
     setLabel(journey.label);
     setOrigin(journey.origin);
     setDestination(journey.destination);
@@ -67,6 +69,7 @@ export function EditJourneyModal({ journey, open, saving = false, onClose, onSav
     setRoutes([]);
     setActiveRoute(null);
     setActivePolylines([]);
+    /* eslint-enable react-hooks/set-state-in-effect */
   }, [journey, open]);
 
   const handleRoutes = useCallback(async (from: JourneyPoint, to: JourneyPoint) => {
