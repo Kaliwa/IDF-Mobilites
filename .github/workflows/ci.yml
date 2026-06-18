@@ -61,6 +61,9 @@ jobs:
       - name: Install dependencies
         run: composer install --prefer-dist --no-scripts --no-interaction
 
+      - name: Create .env
+        run: cp .env.example .env
+
       - name: PHP syntax check
         run: find src -name "*.php" | xargs php -l | grep -v "No syntax errors" | grep "." && exit 1 || true
 
@@ -91,7 +94,7 @@ jobs:
         run: composer install --prefer-dist --no-scripts --no-interaction
 
       - name: Create .env
-        run: echo "APP_ENV=test" > .env
+        run: cp .env.example .env
 
       - name: Unit tests
         run: php vendor/bin/phpunit tests/Unit --no-coverage
