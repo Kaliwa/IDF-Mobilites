@@ -21,7 +21,16 @@ import {
   markNotificationAsRead,
   updateSubscription,
 } from "../../lib/messaging-api";
-import { BellIcon, CheckIcon, ClockIcon } from "../home/icons";
+import { CheckIcon } from "../home/icons";
+import { RouteSign } from "../RouteSign";
+
+function MessagingLineBadge({ line }: { line: MessagingLine }) {
+  return (
+    <span className="text-[1.3rem] leading-none" title={line.name}>
+      <RouteSign route={line.code} />
+    </span>
+  );
+}
 
 export function MessagingClient() {
   const { user, loading: authLoading } = useAuth();
@@ -293,7 +302,6 @@ export function MessagingClient() {
         <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-2xl">
             <div className="inline-flex items-center gap-2 rounded-full bg-white/70 px-3 py-1 text-xs font-semibold tracking-wide text-idf-focus">
-              <BellIcon width={16} height={16} />
               Centre de messagerie
             </div>
             <h2 className="mt-4 text-3xl font-bold tracking-tight text-anthracite sm:text-4xl">
@@ -306,8 +314,8 @@ export function MessagingClient() {
           </div>
 
           <div className="grid gap-3 min-[420px]:grid-cols-2">
-            <StatCard icon={<BellIcon width={18} height={18} />} label="Non lues" value={String(unreadCount)} />
-            <StatCard icon={<ClockIcon width={18} height={18} />} label="Lignes suivies" value={String(activeSubscriptions)} />
+            <StatCard icon={<img src="/images/illustrations/illu-infos-trafic.svg" width={22} height={22} aria-hidden="true" />} label="Non lues" value={String(unreadCount)} />
+            <StatCard icon={<img src="/images/illustrations/illu-app.svg" width={22} height={22} aria-hidden="true" />} label="Lignes suivies" value={String(activeSubscriptions)} />
           </div>
         </div>
       </div>
@@ -367,9 +375,12 @@ export function MessagingClient() {
               {overview.subscriptions.map((subscription) => (
                 <article key={subscription.id} className={`${glassTile} p-5`}>
                   <div className="flex items-start justify-between gap-4">
-                    <h4 className="text-lg font-semibold text-anthracite">
-                      {subscription.line.name}
-                    </h4>
+                    <div className="flex items-center gap-2">
+                      <MessagingLineBadge line={subscription.line} />
+                      <h4 className="text-lg font-semibold text-anthracite">
+                        {subscription.line.name}
+                      </h4>
+                    </div>
                     <span className={chip}>
                       {subscription.enabled ? "Suivie" : "En pause"}
                     </span>
@@ -409,7 +420,10 @@ export function MessagingClient() {
                     key={line.id}
                     className="flex items-center justify-between gap-4 rounded-2xl border border-white/60 bg-white/45 px-4 py-3"
                   >
-                    <p className="font-semibold text-anthracite">{line.name}</p>
+                    <div className="flex items-center gap-2">
+                      <MessagingLineBadge line={line} />
+                      <p className="font-semibold text-anthracite">{line.name}</p>
+                    </div>
                     <button
                       type="button"
                       disabled={subscribing === line.id}
@@ -450,7 +464,12 @@ function NotificationItem({
         <div className="max-w-2xl">
           <div className="flex flex-wrap items-center gap-2">
             <span className={chip}>{categoryLabel(notification.category)}</span>
-            {notification.line ? <span className={chip}>{notification.line.name}</span> : null}
+            {notification.line ? (
+              <span className="inline-flex items-center gap-1.5">
+                <MessagingLineBadge line={notification.line} />
+                <span className="text-xs font-medium text-muted">{notification.line.name}</span>
+              </span>
+            ) : null}
           </div>
           <h4 className="mt-3 text-lg font-semibold text-anthracite">{notification.title}</h4>
           <p className="mt-1 text-sm text-muted">

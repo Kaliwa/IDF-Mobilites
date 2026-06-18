@@ -1,18 +1,12 @@
-import type { ComponentType, SVGProps } from "react";
-import { glassTile, iconBadge, linkArrow, sectionAccent } from "../../lib/ui";
-import {
-  ArrowRightIcon,
-  ClockIcon,
-  CompassIcon,
-  DocumentIcon,
-  LifeBuoyIcon,
-} from "./icons";
+import { glassTile, linkArrow, sectionAccent } from "../../lib/ui";
+import { ArrowRightIcon } from "./icons";
 
 type Access = {
   title: string;
   text: string;
   href: string;
-  Icon: ComponentType<SVGProps<SVGSVGElement>>;
+  illu: string;
+  illuAlt: string;
 };
 
 const ITEMS: Access[] = [
@@ -20,25 +14,22 @@ const ITEMS: Access[] = [
     title: "Trouver mon forfait",
     text: "Un parcours guidé vous oriente vers le titre le plus adapté à vos trajets.",
     href: "#forfaits",
-    Icon: CompassIcon,
+    illu: "/images/illustrations/illu-achetez-titre.svg",
+    illuAlt: "",
   },
   {
     title: "Mes trajets",
     text: "Consultez vos trajets enregistrés, vérifiez les incidents et téléchargez vos justificatifs.",
     href: "/trajets",
-    Icon: DocumentIcon,
-  },
-  {
-    title: "Lignes suivies",
-    text: "Retrouvez vos lignes favorites et choisissez vos canaux d'alerte.",
-    href: "/notifications",
-    Icon: ClockIcon,
+    illu: "/images/illustrations/illu-app.svg",
+    illuAlt: "",
   },
   {
     title: "Alertes trafic",
     text: "Consultez les notifications utiles sur les incidents, paiements et renouvellements.",
     href: "/notifications",
-    Icon: LifeBuoyIcon,
+    illu: "/images/illustrations/illu-infos-trafic.svg",
+    illuAlt: "",
   },
 ];
 
@@ -53,12 +44,18 @@ export function QuickAccess() {
         Les services essentiels de votre espace Comutitres, réunis au même endroit.
       </p>
 
-      <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {ITEMS.map(({ title, text, href, Icon }) => (
+      <div className="mt-8 grid gap-4 sm:grid-cols-3">
+        {ITEMS.map(({ title, text, href, illu, illuAlt }) => (
           <a key={title} href={href} className={`${glassTile} group flex flex-col gap-3 p-5`}>
-            <span className={iconBadge}>
-              <Icon width={22} height={22} />
-            </span>
+            <img
+              src={illu}
+              alt={illuAlt}
+              aria-hidden="true"
+              width={56}
+              height={56}
+              className="shrink-0"
+              draggable={false}
+            />
             <h3 className="text-lg font-semibold text-anthracite">{title}</h3>
             <p className="text-sm leading-relaxed text-muted">{text}</p>
             <span className={`${linkArrow} mt-auto pt-2 text-sm`}>

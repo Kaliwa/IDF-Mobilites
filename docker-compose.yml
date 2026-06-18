@@ -6,10 +6,10 @@ services:
       POSTGRES_DB: idf_mobilites
       POSTGRES_USER: idf_mobilites
       POSTGRES_PASSWORD: idf_mobilites
-    ports:
-      - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - internal
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U idf_mobilites -d idf_mobilites"]
       interval: 10s
@@ -46,6 +46,9 @@ services:
       - api_vendor:/app/vendor
       - api_var:/app/var
     working_dir: /app
+    networks:
+      - internal
+      - public
     command: >
       sh -lc "if [ ! -f .env ]; then cp .env.example .env; fi &&
       if [ ! -f config/jwt/private.pem ]; then
@@ -71,6 +74,8 @@ services:
       WATCHPACK_POLLING: "true"
       NEXT_PUBLIC_API_URL: http://localhost:8000
       NEXT_PUBLIC_MERCURE_URL: http://localhost:3001/.well-known/mercure
+      NEXT_PUBLIC_UMAMI_URL: http://localhost:3002
+      NEXT_PUBLIC_UMAMI_WEBSITE_ID: ""
       INTERNAL_API_URL: http://api:8000
     ports:
       - "3000:3000"
@@ -79,6 +84,8 @@ services:
       - web_node_modules:/app/node_modules
       - web_next:/app/.next
     working_dir: /app
+    networks:
+      - public
     command: >
       sh -lc "pnpm install &&
       pnpm dev --hostname 0.0.0.0 --port 3000"
@@ -96,6 +103,113 @@ services:
         anonymous
     ports:
       - "3001:80"
+    networks:
+      - internal
+      - public
+
+  # ── Analytics ────────────────────────────────────────────────────────────────
+
+  umami:
+    image: ghcr.io/umami-software/umami:postgresql-latest
+    container_name: idf-mobilites-umami
+    ports:
+      - "3002:3000"
+    environment:
+      DATABASE_URL: postgresql://umami:umami@umami-db:5432/umami
+      APP_SECRET: umami-app-secret-change-in-prod
+    depends_on:
+      umami-db:
+        condition: service_healthy
+    networks:
+      - analytics
+      - public
+
+  umami-db:
+    image: postgres:16-alpine
+    container_name: idf-mobilites-umami-db
+    environment:
+      POSTGRES_DB: umami
+      POSTGRES_USER: umami
+      POSTGRES_PASSWORD: umami
+    volumes:
+      - umami_data:/var/lib/postgresql/data
+    networks:
+      - analytics
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U umami -d umami"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── Error monitoring ─────────────────────────────────────────────────────────
+
+  glitchtip:
+    image: glitchtip/glitchtip
+    container_name: idf-mobilites-glitchtip
+    ports:
+      - "8080:8080"
+    environment:
+      DATABASE_URL: postgresql://glitchtip:glitchtip@glitchtip-db:5432/glitchtip
+      SECRET_KEY: glitchtip-secret-change-in-prod
+      EMAIL_URL: consolemail://
+      GLITCHTIP_DOMAIN: http://localhost:8080
+      DEFAULT_FROM_EMAIL: root@localhost
+      CELERY_WORKER_CONCURRENCY: 2
+    depends_on:
+      glitchtip-db:
+        condition: service_healthy
+      glitchtip-redis:
+        condition: service_started
+    networks:
+      - monitoring
+      - public
+
+  glitchtip-worker:
+    image: glitchtip/glitchtip
+    container_name: idf-mobilites-glitchtip-worker
+    command: ./bin/run-celery-with-beat.sh
+    environment:
+      DATABASE_URL: postgresql://glitchtip:glitchtip@glitchtip-db:5432/glitchtip
+      SECRET_KEY: glitchtip-secret-change-in-prod
+      EMAIL_URL: consolemail://
+      GLITCHTIP_DOMAIN: http://localhost:8080
+      CELERY_WORKER_CONCURRENCY: 2
+    depends_on:
+      glitchtip-db:
+        condition: service_healthy
+      glitchtip-redis:
+        condition: service_started
+    networks:
+      - monitoring
+
+  glitchtip-db:
+    image: postgres:16-alpine
+    container_name: idf-mobilites-glitchtip-db
+    environment:
+      POSTGRES_DB: glitchtip
+      POSTGRES_USER: glitchtip
+      POSTGRES_PASSWORD: glitchtip
+    volumes:
+      - glitchtip_data:/var/lib/postgresql/data
+    networks:
+      - monitoring
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U glitchtip -d glitchtip"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  glitchtip-redis:
+    image: redis:7-alpine
+    container_name: idf-mobilites-glitchtip-redis
+    networks:
+      - monitoring
+
+networks:
+  internal:   # postgres ↔ api (jamais exposé)
+  public:     # services accessibles depuis l'hôte
+  analytics:  # umami ↔ umami-db
+  monitoring: # glitchtip ↔ ses dépendances
 
 volumes:
   postgres_data:
@@ -103,3 +217,5 @@ volumes:
   api_var:
   web_node_modules:
   web_next:
+  umami_data:
+  glitchtip_data:

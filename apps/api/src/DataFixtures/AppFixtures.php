@@ -46,25 +46,25 @@ class AppFixtures extends Fixture
         $antoine = $this->createUser($manager, 'antoine.blanc@demo.comutitres.fr',  'Demo1234!', ['ROLE_USER']);
 
         // Line subscriptions
-        $this->createSubscription($manager, $jean,    $lines['a'],   true);
-        $this->createSubscription($manager, $jean,    $lines['b'],   true);
+        $this->createSubscription($manager, $jean,    $lines['A'],   true);
+        $this->createSubscription($manager, $jean,    $lines['B'],   true);
         $this->createSubscription($manager, $marie,   $lines['14'],  true);
         $this->createSubscription($manager, $marie,   $lines['1'],   false);
-        $this->createSubscription($manager, $lucas,   $lines['t3a'], true);
-        $this->createSubscription($manager, $sophie,  $lines['b'],   true);
+        $this->createSubscription($manager, $lucas,   $lines['T3a'], true);
+        $this->createSubscription($manager, $sophie,  $lines['B'],   true);
         $this->createSubscription($manager, $thomas,  $lines['1'],   true);
-        $this->createSubscription($manager, $emma,    $lines['a'],   true);
+        $this->createSubscription($manager, $emma,    $lines['A'],   true);
         $this->createSubscription($manager, $hugo,    $lines['14'],  true);
-        $this->createSubscription($manager, $alice,   $lines['t1'],  true);
-        $this->createSubscription($manager, $alice,   $lines['a'],   false);
-        $this->createSubscription($manager, $antoine, $lines['a'],   true);
+        $this->createSubscription($manager, $alice,   $lines['T1'],  true);
+        $this->createSubscription($manager, $alice,   $lines['A'],   false);
+        $this->createSubscription($manager, $antoine, $lines['A'],   true);
 
         // Payeur tiers pour Sophie
         $payeurLeblanc = $this->createPayeur($manager, 'Frédéric', 'Leblanc', 'frederic.leblanc@email.fr',
             LienBeneficiaire::PARENT, MoyenPaiement::PRELEVEMENT);
 
         // Contracts + dossiers
-        $this->createContract($manager, $jean, $lines['a'], 'active', '-45 days');
+        $this->createContract($manager, $jean, $lines['A'], 'active', '-45 days');
         $this->createDossier($manager, $jean, 'subscription_request', 'carte_identite', 0.92, [], 'pending', '-2 days', null,
             ['lastName' => 'DUPONT', 'firstName' => 'Jean', 'birthDate' => '1992-03-15', 'nationality' => 'Française', 'documentNumber' => 'F12345678', 'expiryDate' => '2030-03-14']);
 
@@ -74,11 +74,11 @@ class AppFixtures extends Fixture
             ['lastName' => 'MARTIN', 'firstName' => 'Marie', 'address' => '23 rue Lecourbe', 'city' => 'Paris', 'postalCode' => '75015', 'issuer' => 'EDF', 'documentDate' => '2026-04-01'],
             "L'adresse extraite (23 rue Lecourbe, 75015) ne correspond pas à l'adresse enregistrée. Document flou. Resoumission requise.");
 
-        $this->createContract($manager, $lucas, $lines['t3a'], 'active', '-30 days');
+        $this->createContract($manager, $lucas, $lines['T3a'], 'active', '-30 days');
         $this->createDossier($manager, $lucas, 'subscription_request', 'certificat_scolarite', 0.88, [], 'pending', '-1 days', null,
             ['lastName' => 'BERNARD', 'firstName' => 'Lucas', 'school' => 'Université Paris-Saclay', 'program' => 'Licence Informatique', 'year' => '2025-2026', 'studentId' => 'P198234762']);
 
-        $this->createContract($manager, $sophie, $lines['b'], 'active', '-90 days', payeur: $payeurLeblanc);
+        $this->createContract($manager, $sophie, $lines['B'], 'active', '-90 days', payeur: $payeurLeblanc);
         $this->createDossier($manager, $sophie, 'payer_change', 'rib', 0.97, [], 'approved', '-10 days', $support,
             ['holderName' => 'LEBLANC Frédéric', 'iban' => 'FR76 3000 6000 0112 3456 7890 189', 'bic' => 'BNPAFRPPXXX', 'bankName' => 'BNP Paribas']);
 
@@ -87,7 +87,7 @@ class AppFixtures extends Fixture
             ['lastName' => 'PETIT', 'firstName' => 'Thomas', 'birthDate' => '2000-11-22', 'nationality' => 'Française', 'documentNumber' => 'G98765432', 'expiryDate' => '2024-08-01'],
             "Carte d'identité expirée depuis 2024-08-01. Document très flou, données illisibles. Demande annulée.");
 
-        $this->createContract($manager, $emma, $lines['a'], 'active', '-15 days');
+        $this->createContract($manager, $emma, $lines['A'], 'active', '-15 days');
         $this->createDossier($manager, $emma, 'renewal', 'justificatif_domicile', 0.71, [], 'pending', '-3 days', null,
             ['lastName' => 'DUBOIS', 'firstName' => 'Emma', 'address' => '4 avenue des Gobelins', 'city' => 'Paris', 'postalCode' => '75013', 'issuer' => 'Bouygues Telecom', 'documentDate' => '2026-05-15']);
 
@@ -95,13 +95,13 @@ class AppFixtures extends Fixture
         $this->createDossier($manager, $hugo, 'subscription_request', 'carte_identite', 0.43, ['minor_detected'], 'pending', '-5 days', null,
             ['lastName' => 'MOREAU', 'firstName' => 'Hugo', 'birthDate' => '2010-07-08', 'nationality' => 'Française', 'documentNumber' => 'H11223344', 'expiryDate' => '2028-07-07']);
 
-        $this->createContract($manager, $alice, $lines['t1'], 'active', '-120 days');
+        $this->createContract($manager, $alice, $lines['T1'], 'active', '-120 days');
         $this->createDossier($manager, $alice, 'subscription_request', 'certificat_scolarite', 0.66, ['name_mismatch'], 'pending', '-4 days', null,
             ['lastName' => 'ROUX-LAMBERT', 'firstName' => 'Alice', 'school' => 'Sciences Po Paris', 'program' => 'Master Relations Internationales', 'year' => '2025-2026', 'studentId' => 'SP987654']);
         $this->createDossier($manager, $alice, 'renewal', 'justificatif_domicile', 0.89, [], 'approved', '-100 days', $support,
             ['lastName' => 'ROUX', 'firstName' => 'Alice', 'address' => '7 rue Saint-Guillaume', 'city' => 'Paris', 'postalCode' => '75007', 'issuer' => 'ENGIE', 'documentDate' => '2025-11-01']);
 
-        $this->createContract($manager, $antoine, $lines['a'], 'active', '-8 days');
+        $this->createContract($manager, $antoine, $lines['A'], 'active', '-8 days');
         $this->createDossier($manager, $antoine, 'subscription_request', 'rib', 0.94, [], 'pending', '-8 days', null,
             ['holderName' => 'BLANC Antoine', 'iban' => 'FR76 1027 8060 0000 1234 5678 912', 'bic' => 'CMCIFR2A', 'bankName' => 'Crédit Mutuel']);
 
@@ -159,7 +159,7 @@ class AppFixtures extends Fixture
         $this->addMessage($manager, $conv3, 'support', "Bonjour Alice, oui c'est possible. Nous proratiserons le montant restant du mois en cours. Je prépare la modification.", '-1 days');
 
         // User notifications
-        $this->createNotification($manager, $jean,    $lines['a'],   'Perturbation RER A ce soir',
+        $this->createNotification($manager, $jean,    $lines['A'],   'Perturbation RER A ce soir',
             'Des travaux sont prévus sur la ligne A entre 21h et 5h. Des trains directs circulent toutes les 20 minutes.',
             'incident', 'high', false, '-1 days', 'Voir les horaires alternatifs');
         $this->createNotification($manager, $jean,    null,           'Renouvellement dans 15 jours',
@@ -171,16 +171,16 @@ class AppFixtures extends Fixture
         $this->createNotification($manager, $marie,   null,           'Échec de paiement',
             "Votre prélèvement de 86,40 € du 6 juin n'a pas pu être traité. Mettez à jour vos coordonnées bancaires.",
             'payment', 'high', false, '-11 days', 'Mettre à jour mes coordonnées');
-        $this->createNotification($manager, $emma,    $lines['a'],   'Perturbation RER A — Grève',
+        $this->createNotification($manager, $emma,    $lines['A'],   'Perturbation RER A — Grève',
             'Grève nationale le 5 juin. Le RER A circulera sur service minimum. Prévoir des délais importants.',
             'incident', 'high', true, '-12 days');
-        $this->createNotification($manager, $alice,   $lines['t1'],  'Travaux Tram T1 ce week-end',
+        $this->createNotification($manager, $alice,   $lines['T1'],  'Travaux Tram T1 ce week-end',
             'Des travaux de maintenance sont prévus samedi et dimanche. Des bus de remplacement circuleront sur tout le tracé.',
             'incident', 'medium', false, '-3 days');
         $this->createNotification($manager, $alice,   null,           'Renouvellement abonnement',
             'Votre abonnement Navigo Mois arrive à échéance dans 10 jours.',
             'renewal', 'medium', false, '-5 days', 'Renouveler mon abonnement');
-        $this->createNotification($manager, $antoine, $lines['a'],   'Retards RER A',
+        $this->createNotification($manager, $antoine, $lines['A'],   'Retards RER A',
             'Des retards de 15 à 20 minutes sont à prévoir sur le RER A en direction de Cergy-Le Haut / Poissy.',
             'incident', 'low', false, '-6 hours');
 
@@ -197,14 +197,14 @@ class AppFixtures extends Fixture
     private function createLines(ObjectManager $manager): array
     {
         $data = [
-            ['code' => 'a',   'name' => 'RER A',    'primRef' => 'STIF:Line::C01742:'],
+            ['code' => 'A',   'name' => 'RER A',    'primRef' => 'STIF:Line::C01742:'],
             ['code' => '14',  'name' => 'Métro 14',  'primRef' => 'STIF:Line::C01384:'],
-            ['code' => 't3a', 'name' => 'Tram T3a',  'primRef' => 'STIF:Line::C01895:'],
-            ['code' => 'b',   'name' => 'RER B',     'primRef' => 'STIF:Line::C01743:'],
+            ['code' => 'T3a', 'name' => 'Tram T3a',  'primRef' => 'STIF:Line::C01895:'],
+            ['code' => 'B',   'name' => 'RER B',     'primRef' => 'STIF:Line::C01743:'],
             ['code' => '1',   'name' => 'Métro 1',   'primRef' => 'STIF:Line::C01140:'],
-            ['code' => 't1',  'name' => 'Tram T1',   'primRef' => 'STIF:Line::C01430:'],
-            ['code' => 't3b', 'name' => 'Tram T3b',  'primRef' => 'STIF:Line::C01896:'],
-            ['code' => 'd',   'name' => 'RER D',     'primRef' => 'STIF:Line::C01728:'],
+            ['code' => 'T1',  'name' => 'Tram T1',   'primRef' => 'STIF:Line::C01430:'],
+            ['code' => 'T3b', 'name' => 'Tram T3b',  'primRef' => 'STIF:Line::C01896:'],
+            ['code' => 'D',   'name' => 'RER D',     'primRef' => 'STIF:Line::C01728:'],
         ];
 
         $lines = [];

@@ -89,6 +89,12 @@ class TransitLinesImporter
                 continue;
             }
 
+            // Ignore lignes TER / interurbaines : pas de pictogramme IDFM.
+            // Leur shortname contient un espace ("TER C01746") ou est générique ("TER", "NAT").
+            if (str_contains($shortname, ' ') || in_array(strtoupper($shortname), ['TER', 'NAT'], true)) {
+                continue;
+            }
+
             $rows[] = ['id' => $id, 'shortname' => $shortname, 'transportmode' => $mode];
         }
 
@@ -102,7 +108,7 @@ class TransitLinesImporter
     private function upsert(array $record, array &$counts): void
     {
         $primRef = sprintf('STIF:Line::%s:', $record['id']);
-        $baseCode = strtolower(str_replace(' ', '-', $record['shortname']));
+        $baseCode = $record['shortname'];
         $name = $this->formatName($record['shortname'], $record['transportmode']);
 
         $repository = $this->entityManager->getRepository(TransitLine::class);

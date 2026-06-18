@@ -12,7 +12,6 @@ import {
   formatMessagingDate,
   sendConversationMessage,
 } from "../../lib/messaging-api";
-import { MessageSquareIcon } from "../home/icons";
 
 export function MessagesClient() {
   const { user, loading: authLoading } = useAuth();
@@ -166,7 +165,6 @@ export function MessagesClient() {
         <span className={sectionAccent} aria-hidden="true" />
         <div className="flex flex-col gap-4">
           <div className="inline-flex self-start items-center gap-2 rounded-full bg-white/70 px-3 py-1 text-xs font-semibold tracking-wide text-idf-focus">
-            <MessageSquareIcon width={16} height={16} />
             Messagerie support
           </div>
           <h2 className="text-3xl font-bold tracking-tight text-anthracite sm:text-4xl">
@@ -188,7 +186,7 @@ export function MessagesClient() {
       <section className={`${glass} p-6 sm:p-8`}>
         <div className="flex items-center gap-3">
           <span className={iconBadge}>
-            <MessageSquareIcon width={18} height={18} />
+            <img src="/images/illustrations/illu-infos-trafic.svg" width={22} height={22} aria-hidden="true" />
           </span>
           <div>
             <h3 className="text-xl font-bold text-anthracite">Messages</h3>
@@ -268,7 +266,6 @@ export function MessagesClient() {
                     className={btnPrimary}
                     disabled={sendingConversationId === conversation.id}
                   >
-                    <MessageSquareIcon width={16} height={16} />
                     Envoyer
                   </button>
                 </div>
