@@ -12,10 +12,7 @@ import { MobileMenu } from "./MobileMenu";
 
 const NAV = [
   { href: "/simulateur", label: "Simulateur" },
-  { href: "/#forfaits", label: "Titres & tarifs" },
   { href: "/#acces", label: "Services" },
-  { href: "/#reseau", label: "Le réseau" },
-  { href: "/#aide", label: "Aide" },
   { href: "/trajets", label: "Mes trajets" },
 ];
 

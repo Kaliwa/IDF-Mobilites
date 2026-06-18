@@ -19,14 +19,6 @@ const COLUMNS = [
       { label: "Messages", href: "/messages" },
     ],
   },
-  {
-    title: "Aide",
-    links: [
-      { label: "Aide et contacts", href: "https://www.iledefrance-mobilites.fr/" },
-      { label: "Foire aux questions", href: "https://www.iledefrance-mobilites.fr/" },
-      { label: "Service après-vente", href: "#aide" },
-    ],
-  },
 ];
 
 const LEGAL = [
@@ -39,7 +31,7 @@ const LEGAL = [
 
 export function SiteFooter() {
   return (
-    <footer id="aide" className="mt-8 scroll-mt-20 border-t border-border bg-surface">
+    <footer className="mt-8 border-t border-border bg-surface">
       <div className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6">
         <div className="grid gap-10 md:grid-cols-[1.2fr_repeat(3,1fr)]">
           <div>

@@ -8,8 +8,8 @@ import {
   type NiveauTst,
   type Profil,
 } from "../../lib/tarifs";
-import { btnPrimary, glass, iconBadge, sectionAccent } from "../../lib/ui";
-import { ArrowRightIcon, CheckIcon, CompassIcon } from "../home/icons";
+import { btnPrimary, glass, sectionAccent } from "../../lib/ui";
+import { ArrowRightIcon, CheckIcon } from "../home/icons";
 
 const PROFILS: { id: Profil; label: string }[] = [
   { id: "standard", label: "Standard" },
@@ -140,9 +140,13 @@ export function Simulator() {
 
         <div className={`${glass} rise-in p-6 sm:p-8`} style={{ animationDelay: "0.1s" }}>
           <div className="flex items-start gap-3">
-            <span className={iconBadge}>
-              <CompassIcon width={22} height={22} />
-            </span>
+            <img
+              src="/images/illustrations/illu-achetez-titre.svg"
+              width={44}
+              height={44}
+              aria-hidden="true"
+              className="shrink-0"
+            />
             <div>
               <p className="text-xs uppercase tracking-wide text-muted">
                 Le moins cher pour vous
