@@ -1,6 +1,7 @@
 api_platform:
-    title: Hello API Platform
+    title: Île-de-France Mobilités — API Comutitre
     version: 1.0.0
+    description: API REST du projet Comutitre — gestion des abonnements, orientation, trajets et perturbations réseau.
     defaults:
         stateless: true
         cache_headers:
