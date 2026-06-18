@@ -90,6 +90,11 @@ php bin/console doctrine:migrations:migrate --no-interaction --allow-no-migratio
 php bin/console app:orientation:seed --no-interaction
 php bin/console app:lines:sync --no-interaction || echo "Transit lines sync skipped (missing IDFM_API_KEY?)."
 
+if [ -n "$ADMIN_EMAIL" ] && [ -n "$ADMIN_PASSWORD" ]; then
+  php bin/console app:users:create-support "$ADMIN_EMAIL" "$ADMIN_PASSWORD" --admin --update --no-interaction
+fi
+
+php bin/console assets:install public --no-interaction
 php bin/console cache:clear --env=prod --no-warmup
 php bin/console cache:warmup --env=prod
 

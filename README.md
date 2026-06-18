@@ -84,13 +84,29 @@ Le fichier `render.yaml` a la racine decrit toute la stack :
 3. Lors de la creation, renseigne les secrets demandes :
    - `IDFM_API_KEY` (donnees IDFM / lignes)
    - `PRIM_API_TOKEN` (itineraires Navitia)
+   - `ADMIN_EMAIL` et `ADMIN_PASSWORD` (compte backoffice Sonata)
 4. Attends la fin du deploiement (migrations + seed orientation au demarrage de l'API).
 5. Ouvre l'URL du service `idf-mobilites-web`.
+
+### Backoffice admin (Sonata)
+
+L'admin n'est pas un service separe : il est servi par l'API Symfony.
+
+- URL prod : `https://idf-mobilites-api.onrender.com/admin/login`
+- URL locale : http://localhost:8000/admin/login
+- Compte cree au deploy si `ADMIN_EMAIL` / `ADMIN_PASSWORD` sont definis sur Render
+
+En local, creer un compte admin :
+
+```bash
+docker compose exec api php bin/console app:users:create-support admin@example.com 'Motdepasse12' --admin
+```
 
 ### URLs utiles en prod
 
 - Frontend : URL du service `idf-mobilites-web`
 - API : URL du service `idf-mobilites-api` (`/api` pour la doc)
+- Admin : URL du service `idf-mobilites-api` + `/admin/login`
 - Healthcheck API : `/api/health`
 
 ### Limites du plan gratuit Render
