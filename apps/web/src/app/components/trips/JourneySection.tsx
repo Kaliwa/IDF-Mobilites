@@ -100,7 +100,7 @@ export function JourneySection() {
           );
           setLinesInput((current) => current || first.lines.join(", "));
         } else {
-          setMessage("Aucune suggestion trouvée.");
+          setMessage("Aucun itinéraire en transports en commun trouvé pour cette origine et destination.");
           setActiveRoute(null);
           setActivePolylines([]);
         }

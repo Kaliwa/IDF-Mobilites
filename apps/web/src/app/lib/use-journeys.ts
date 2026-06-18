@@ -88,7 +88,7 @@ export function formatJourneyLines(lines: JourneyLine[] | null | undefined): str
     .join(" · ");
 }
 
-type JourneyPayload = {
+export type JourneyPayload = {
   label: string;
   origin: JourneyPoint;
   destination: JourneyPoint;
@@ -151,6 +151,17 @@ export function useJourneys() {
     };
   }, [token, user]);
 
+  const journeyRequestBody = (payload: JourneyPayload) => ({
+    label: payload.label,
+    originName: payload.origin.name,
+    originLat: payload.origin.lat,
+    originLng: payload.origin.lng,
+    destinationName: payload.destination.name,
+    destinationLat: payload.destination.lat,
+    destinationLng: payload.destination.lng,
+    lines: payload.lines,
+  });
+
   const saveJourney = useCallback(
     async (payload: JourneyPayload) => {
       if (!token || !user) {
@@ -165,16 +176,7 @@ export function useJourneys() {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({
-            label: payload.label,
-            originName: payload.origin.name,
-            originLat: payload.origin.lat,
-            originLng: payload.origin.lng,
-            destinationName: payload.destination.name,
-            destinationLat: payload.destination.lat,
-            destinationLng: payload.destination.lng,
-            lines: payload.lines,
-          }),
+          body: JSON.stringify(journeyRequestBody(payload)),
         });
         if (!response.ok) {
           const data = await readJson<{ message?: string }>(response);
@@ -190,6 +192,47 @@ export function useJourneys() {
       }
     },
     [token, user],
+  );
+
+  const updateJourney = useCallback(
+    async (id: number, payload: JourneyPayload) => {
+      if (!token || !user) {
+        throw new Error("Authentification requise pour modifier un trajet.");
+      }
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/journeys/${id}`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(journeyRequestBody(payload)),
+        });
+        if (!response.ok) {
+          const data = await readJson<{ message?: string }>(response);
+          throw new Error(data?.message ?? "Impossible de modifier le trajet.");
+        }
+        const data = await readJson<{ journey: Journey }>(response);
+        if (data?.journey) {
+          setJourneys((current) =>
+            current.map((journey) => (journey.id === id ? data.journey : journey)),
+          );
+          if (disruptionsJourneyId === id) {
+            setDisruptions([]);
+            setPlannedDisruptions([]);
+            setCanGenerateJustificatif(false);
+            setCheckedLines([]);
+            setDisruptionsJourneyId(null);
+          }
+        }
+        return data?.journey;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [disruptionsJourneyId, token, user],
   );
 
   const loadDisruptions = useCallback(
@@ -266,6 +309,7 @@ export function useJourneys() {
     downloading,
     error,
     saveJourney,
+    updateJourney,
     loadDisruptions,
     downloadJustificatif,
   };

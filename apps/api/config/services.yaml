@@ -46,7 +46,6 @@ services:
         arguments:
             $apiKey: '%env(PRIM_API_TOKEN)%'
             $navitiaBaseUrl: '%env(default::PRIM_NAVITIA_URL)%'
-            $osrmUrl: '%env(default::OSRM_URL)%'
 
     # SonataAdmin — Admin classes
     App\Admin\UserAdmin:
