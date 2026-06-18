@@ -116,7 +116,6 @@ services:
     image:
       url: docker.io/glitchtip/glitchtip:latest
     healthCheckPath: /login
-    dockerCommand: sh -c "./bin/run-celery-with-beat.sh & exec ./bin/start.sh"
     envVars:
       # Copy Internal Database URL from idf-mobilites-db, replace /idf_mobilites with /glitchtip
       # (run scripts/render-init-databases.sql on the Postgres instance first).
@@ -149,7 +148,7 @@ services:
     plan: free
     autoDeploy: true
     dockerfilePath: ./apps/web/Dockerfile
-    dockerContext: ./apps/web
+    dockerContext: .
     healthCheckPath: /
     envVars:
       - key: NEXT_PUBLIC_API_URL

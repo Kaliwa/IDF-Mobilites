@@ -171,6 +171,6 @@ docker compose exec api php bin/console app:users:create-support admin@example.c
 - Les services web s'endorment apres ~15 min d'inactivite (cold start).
 - **1 seule** base PostgreSQL gratuite (expire au bout de 90 jours).
 - **6 services web** partagent le quota gratuit (~750 h/mois au total).
-- GlitchTip : worker Celery dans le meme conteneur web (pas de background worker gratuit).
+- GlitchTip : pas de worker Celery sur le plan gratuit (l'UI et l'ingestion basique fonctionnent ; les tâches async peuvent être limitées).
 
 Le developpement local continue d'utiliser `docker compose` avec `Dockerfile.dev`.
