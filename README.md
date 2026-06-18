@@ -58,6 +58,9 @@ docker compose logs -f
 - Frontend : http://localhost:3000
 - API : http://localhost:8000
 - API docs : http://localhost:8000/api
+- Admin : http://localhost:8000/admin/login
+- Umami : http://localhost:3002 (`admin` / `umami`)
+- GlitchTip : http://localhost:8080
 - PostgreSQL : localhost:5433
 
 ## Fonctionnalites
@@ -76,21 +79,47 @@ docker compose logs -f
 
 Le fichier `render.yaml` a la racine decrit toute la stack :
 
-- `idf-mobilites-db` : PostgreSQL (plan gratuit)
-- `idf-mobilites-api` : Symfony (Dockerfile prod dans `apps/api`)
-- `idf-mobilites-web` : Next.js (Dockerfile prod dans `apps/web`)
-- `idf-mobilites-mercure` : hub temps reel
+- `idf-mobilites-db` : PostgreSQL app
+- `idf-mobilites-api` : Symfony
+- `idf-mobilites-web` : Next.js
+- `idf-mobilites-mercure` : temps reel
+- `idf-mobilites-umami` + `idf-mobilites-umami-db` : analytics
+- `idf-mobilites-glitchtip` + `idf-mobilites-glitchtip-db` + Redis : erreurs
 
-### Etapes
+### Etapes initiales
 
-1. Pousse le repo sur GitHub ou GitLab.
-2. Sur [Render](https://render.com), cree un **Blueprint** et pointe vers ce depot.
-3. Lors de la creation, renseigne les secrets demandes :
-   - `IDFM_API_KEY` (donnees IDFM / lignes)
-   - `PRIM_API_TOKEN` (itineraires Navitia)
-   - `ADMIN_EMAIL` et `ADMIN_PASSWORD` (compte backoffice Sonata)
-4. Attends la fin du deploiement (migrations + seed orientation au demarrage de l'API).
-5. Ouvre l'URL du service `idf-mobilites-web`.
+1. Pousse le repo sur GitHub.
+2. Render → **Sync Blueprint** pour creer/mettre a jour les services.
+3. Renseigne les secrets :
+   - `IDFM_API_KEY`, `PRIM_API_TOKEN`
+   - `ADMIN_EMAIL`, `ADMIN_PASSWORD`
+4. Attends que **tous** les services soient `Live` (umami et glitchtip inclus).
+
+### Configurer Umami (analytics)
+
+1. Ouvre `https://idf-mobilites-umami.onrender.com`
+2. Login : `admin` / `umami` → change le mot de passe
+3. **Settings → Websites → Add website**
+   - Domain : `idf-mobilites-web.onrender.com`
+4. Copie le **Website ID** (UUID)
+5. Render → `idf-mobilites-web` → Environment :
+   - `NEXT_PUBLIC_UMAMI_WEBSITE_ID` = l'UUID
+6. **Manual Deploy** sur `idf-mobilites-web` (rebuild obligatoire)
+
+`NEXT_PUBLIC_UMAMI_URL` est deja lie a l'instance Umami Render via le Blueprint.
+
+### Configurer GlitchTip (erreurs)
+
+1. Ouvre `https://idf-mobilites-glitchtip.onrender.com`
+2. Cree un compte (inscription activee au 1er deploy)
+3. Cree une **organisation** + un **projet**
+4. Copie le **DSN** du projet (format Sentry, ex. `https://key@idf-mobilites-glitchtip.onrender.com/1`)
+5. Render → `idf-mobilites-web` → Environment :
+   - `NEXT_PUBLIC_SENTRY_DSN` = le DSN GlitchTip
+6. (Optionnel) Render → `idf-mobilites-api` → `SENTRY_DSN` = meme DSN pour l'API Symfony plus tard
+7. **Manual Deploy** sur `idf-mobilites-web`
+
+Page de test : `/glitchtip-test` sur le frontend.
 
 ### Backoffice admin (Sonata)
 
@@ -108,15 +137,17 @@ docker compose exec api php bin/console app:users:create-support admin@example.c
 
 ### URLs utiles en prod
 
-- Frontend : URL du service `idf-mobilites-web`
-- API : URL du service `idf-mobilites-api` (`/api` pour la doc)
-- Admin : URL du service `idf-mobilites-api` + `/admin/login`
-- Healthcheck API : `/api/health`
+- Frontend : `idf-mobilites-web`
+- API : `idf-mobilites-api`
+- Admin : `idf-mobilites-api` + `/admin/login`
+- Umami : `idf-mobilites-umami`
+- GlitchTip : `idf-mobilites-glitchtip`
 
 ### Limites du plan gratuit Render
 
-- Les services web s'endorment apres ~15 min d'inactivite (cold start au reveil).
-- La base PostgreSQL gratuite expire au bout de 90 jours (a migrer ensuite).
-- 3 services web gratuits : chacun a son quota d'heures mensuel.
+- Les services web s'endorment apres ~15 min d'inactivite (cold start).
+- Chaque base PostgreSQL gratuite expire au bout de 90 jours.
+- **7 services web** partagent le quota gratuit (~750 h/mois au total).
+- GlitchTip : worker Celery dans le meme conteneur web (pas de background worker gratuit).
 
 Le developpement local continue d'utiliser `docker compose` avec `Dockerfile.dev`.

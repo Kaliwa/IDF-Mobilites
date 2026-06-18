@@ -4,6 +4,16 @@ databases:
     databaseName: idf_mobilites
     user: idf_mobilites
 
+  - name: idf-mobilites-umami-db
+    plan: free
+    databaseName: umami
+    user: umami
+
+  - name: idf-mobilites-glitchtip-db
+    plan: free
+    databaseName: glitchtip
+    user: glitchtip
+
 services:
   - type: web
     name: idf-mobilites-mercure
@@ -81,6 +91,67 @@ services:
         sync: false
       - key: ADMIN_PASSWORD
         sync: false
+      - key: SENTRY_DSN
+        sync: false
+
+  - type: web
+    name: idf-mobilites-umami
+    runtime: image
+    plan: free
+    autoDeploy: true
+    image:
+      url: ghcr.io/umami-software/umami:postgresql-latest
+    healthCheckPath: /api/heartbeat
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: idf-mobilites-umami-db
+          property: connectionString
+      - key: APP_SECRET
+        generateValue: true
+
+  - type: keyvalue
+    name: idf-mobilites-glitchtip-redis
+    plan: free
+    ipAllowList:
+      - source: 0.0.0.0/0
+        description: everywhere
+    maxmemoryPolicy: allkeys-lru
+
+  - type: web
+    name: idf-mobilites-glitchtip
+    runtime: image
+    plan: free
+    autoDeploy: true
+    image:
+      url: docker.io/glitchtip/glitchtip:latest
+    healthCheckPath: /login
+    dockerCommand: sh -c "./bin/run-celery-with-beat.sh & exec ./bin/start.sh"
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: idf-mobilites-glitchtip-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: REDIS_URL
+        fromService:
+          type: keyvalue
+          name: idf-mobilites-glitchtip-redis
+          property: connectionString
+      - key: EMAIL_URL
+        value: consolemail://
+      - key: DEFAULT_FROM_EMAIL
+        value: noreply@idf-mobilites.onrender.com
+      - key: GLITCHTIP_DOMAIN
+        fromService:
+          type: web
+          name: idf-mobilites-glitchtip
+          envVarKey: RENDER_EXTERNAL_URL
+      - key: ENABLE_USER_REGISTRATION
+        value: "True"
+      - key: CELERY_WORKER_CONCURRENCY
+        value: "2"
 
   - type: web
     name: idf-mobilites-web
@@ -101,3 +172,12 @@ services:
           type: web
           name: idf-mobilites-mercure
           envVarKey: RENDER_EXTERNAL_URL
+      - key: NEXT_PUBLIC_UMAMI_URL
+        fromService:
+          type: web
+          name: idf-mobilites-umami
+          envVarKey: RENDER_EXTERNAL_URL
+      - key: NEXT_PUBLIC_UMAMI_WEBSITE_ID
+        sync: false
+      - key: NEXT_PUBLIC_SENTRY_DSN
+        sync: false

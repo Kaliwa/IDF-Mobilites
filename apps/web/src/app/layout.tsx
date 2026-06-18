@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import Script from "next/script";
 import "./globals.css";
 import "./idfm-signs.css";
 
@@ -29,14 +28,16 @@ export default function RootLayout({
       lang="fr"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
+      <head>
+        {process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID ? (
+          <script
+            defer
+            src={`${process.env.NEXT_PUBLIC_UMAMI_URL ?? "http://localhost:3002"}/script.js`}
+            data-website-id={process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID}
+          />
+        ) : null}
+      </head>
       <body className="min-h-full flex flex-col">{children}</body>
-      {process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID ? (
-        <Script
-          defer
-          src={`${process.env.NEXT_PUBLIC_UMAMI_URL ?? "http://localhost:3002"}/script.js`}
-          data-website-id={process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID}
-        />
-      ) : null}
     </html>
   );
 }
