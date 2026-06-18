@@ -6,6 +6,10 @@ Monorepo mobile-first avec :
 - `apps/api` : Symfony 7 API-only avec API Platform
 - `docker-compose.yml` : stack complète `web` + `api` + `postgres`
 
+## Gestion de projet
+
+Suivi Kanban et User Stories : [GitHub Projects — IDF Mobilités](https://github.com/users/Kaliwa/projects/8)
+
 ## Prerequis
 
 - Docker
