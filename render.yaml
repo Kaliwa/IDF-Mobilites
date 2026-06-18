@@ -9,6 +9,7 @@ services:
     name: idf-mobilites-mercure
     runtime: image
     plan: free
+    autoDeploy: true
     image:
       url: docker.io/dunglas/mercure:v0.16
     healthCheckPath: /healthz
@@ -32,6 +33,7 @@ services:
     name: idf-mobilites-api
     runtime: docker
     plan: free
+    autoDeploy: true
     dockerfilePath: ./apps/api/Dockerfile
     dockerContext: ./apps/api
     healthCheckPath: /api/health
@@ -80,6 +82,7 @@ services:
     name: idf-mobilites-web
     runtime: docker
     plan: free
+    autoDeploy: true
     dockerfilePath: ./apps/web/Dockerfile
     dockerContext: ./apps/web
     healthCheckPath: /
