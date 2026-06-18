@@ -79,21 +79,44 @@ docker compose logs -f
 
 Le fichier `render.yaml` a la racine decrit toute la stack :
 
-- `idf-mobilites-db` : PostgreSQL app
-- `idf-mobilites-api` : Symfony
+- `idf-mobilites-db` : **une seule** PostgreSQL (limite plan gratuit Render)
+- `idf-mobilites-api` : Symfony → base `idf_mobilites`
 - `idf-mobilites-web` : Next.js
 - `idf-mobilites-mercure` : temps reel
-- `idf-mobilites-umami` + `idf-mobilites-umami-db` : analytics
-- `idf-mobilites-glitchtip` + `idf-mobilites-glitchtip-db` + Redis : erreurs
+- `idf-mobilites-umami` : analytics → base `umami` (meme serveur Postgres)
+- `idf-mobilites-glitchtip` + Redis : erreurs → base `glitchtip` (meme serveur Postgres)
+
+### Une seule base Postgres (plan gratuit)
+
+Render n'autorise qu'**une** base gratuite. Umami et GlitchTip utilisent le **meme serveur**
+`idf-mobilites-db` avec des bases logiques separees (`umami`, `glitchtip`).
+
+**Etape obligatoire avant Umami/GlitchTip :**
+
+1. Render → `idf-mobilites-db` → **Connect** → ouvre PSQL
+2. Execute le contenu de `scripts/render-init-databases.sql` :
+   ```sql
+   CREATE DATABASE umami;
+   CREATE DATABASE glitchtip;
+   ```
+3. Copie l'**Internal Database URL** de `idf-mobilites-db` (format :
+   `postgresql://idf_mobilites:PASS@dpg-xxx-a/idf_mobilites`)
+4. Derive deux URLs en changeant uniquement le nom de base :
+   - Umami : `.../umami` (meme host, user, mot de passe)
+   - GlitchTip : `.../glitchtip`
+5. Render → `idf-mobilites-umami` → Environment → `DATABASE_URL` = URL umami
+6. Render → `idf-mobilites-glitchtip` → Environment → `DATABASE_URL` = URL glitchtip
+7. Redeploie umami et glitchtip
 
 ### Etapes initiales
 
 1. Pousse le repo sur GitHub.
 2. Render → **Sync Blueprint** pour creer/mettre a jour les services.
-3. Renseigne les secrets :
+3. Renseigne les secrets au sync (ou apres dans Environment) :
    - `IDFM_API_KEY`, `PRIM_API_TOKEN`
    - `ADMIN_EMAIL`, `ADMIN_PASSWORD`
-4. Attends que **tous** les services soient `Live` (umami et glitchtip inclus).
+   - `DATABASE_URL` sur **umami** et **glitchtip** (voir ci-dessus)
+4. Attends que les services soient `Live`.
 
 ### Configurer Umami (analytics)
 
@@ -146,8 +169,8 @@ docker compose exec api php bin/console app:users:create-support admin@example.c
 ### Limites du plan gratuit Render
 
 - Les services web s'endorment apres ~15 min d'inactivite (cold start).
-- Chaque base PostgreSQL gratuite expire au bout de 90 jours.
-- **7 services web** partagent le quota gratuit (~750 h/mois au total).
+- **1 seule** base PostgreSQL gratuite (expire au bout de 90 jours).
+- **6 services web** partagent le quota gratuit (~750 h/mois au total).
 - GlitchTip : worker Celery dans le meme conteneur web (pas de background worker gratuit).
 
 Le developpement local continue d'utiliser `docker compose` avec `Dockerfile.dev`.

@@ -4,16 +4,6 @@ databases:
     databaseName: idf_mobilites
     user: idf_mobilites
 
-  - name: idf-mobilites-umami-db
-    plan: free
-    databaseName: umami
-    user: umami
-
-  - name: idf-mobilites-glitchtip-db
-    plan: free
-    databaseName: glitchtip
-    user: glitchtip
-
 services:
   - type: web
     name: idf-mobilites-mercure
@@ -103,10 +93,10 @@ services:
       url: ghcr.io/umami-software/umami:postgresql-latest
     healthCheckPath: /api/heartbeat
     envVars:
+      # Copy Internal Database URL from idf-mobilites-db, replace /idf_mobilites with /umami
+      # (run scripts/render-init-databases.sql on the Postgres instance first).
       - key: DATABASE_URL
-        fromDatabase:
-          name: idf-mobilites-umami-db
-          property: connectionString
+        sync: false
       - key: APP_SECRET
         generateValue: true
 
@@ -128,10 +118,10 @@ services:
     healthCheckPath: /login
     dockerCommand: sh -c "./bin/run-celery-with-beat.sh & exec ./bin/start.sh"
     envVars:
+      # Copy Internal Database URL from idf-mobilites-db, replace /idf_mobilites with /glitchtip
+      # (run scripts/render-init-databases.sql on the Postgres instance first).
       - key: DATABASE_URL
-        fromDatabase:
-          name: idf-mobilites-glitchtip-db
-          property: connectionString
+        sync: false
       - key: SECRET_KEY
         generateValue: true
       - key: REDIS_URL
