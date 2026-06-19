@@ -78,4 +78,12 @@ class SupportMessage
 
         return $this;
     }
+
+    public function __toString(): string
+    {
+        $prefix = $this->author === 'service' ? '[Support]' : '[Client]';
+        $date = $this->sentAt?->format('d/m/Y H:i') ?? '';
+
+        return sprintf('%s %s — %s', $prefix, $date, mb_strimwidth((string) $this->content, 0, 80, '…'));
+    }
 }

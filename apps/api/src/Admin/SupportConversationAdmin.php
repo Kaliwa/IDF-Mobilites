@@ -2,14 +2,16 @@
 
 namespace App\Admin;
 
+use App\Entity\SupportMessage;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
-use Sonata\DoctrineORMAdminBundle\Filter\ChoiceFilter;
-use Sonata\DoctrineORMAdminBundle\Filter\StringFilter;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Show\ShowMapper;
+use Sonata\DoctrineORMAdminBundle\Filter\ChoiceFilter;
+use Sonata\DoctrineORMAdminBundle\Filter\StringFilter;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 
 final class SupportConversationAdmin extends AbstractAdmin
 {
@@ -33,12 +35,22 @@ final class SupportConversationAdmin extends AbstractAdmin
             ->add('subject', null, ['label' => 'Sujet'])
             ->add('status', ChoiceType::class, [
                 'choices' => [
-                    'Ouvert' => 'open',
-                    'En cours' => 'in_progress',
-                    'Résolu' => 'resolved',
-                    'Fermé' => 'closed',
+                    'Ouvert'    => 'open',
+                    'En cours'  => 'in_progress',
+                    'Résolu'    => 'resolved',
+                    'Fermé'     => 'closed',
                 ],
                 'label' => 'Statut',
+            ])
+            ->add('replyBody', TextareaType::class, [
+                'label'    => 'Répondre au client',
+                'mapped'   => false,
+                'required' => false,
+                'attr'     => [
+                    'rows'        => 5,
+                    'placeholder' => 'Laisser vide pour ne pas envoyer de message…',
+                ],
+                'help' => 'Ce message sera envoyé en tant que réponse du support.',
             ]);
     }
 
@@ -49,7 +61,7 @@ final class SupportConversationAdmin extends AbstractAdmin
             ->add('user.email', null, ['label' => 'Utilisateur'])
             ->add('subject', null, ['label' => 'Sujet'])
             ->add('status', null, ['label' => 'Statut'])
-            ->add('messages', null, ['label' => 'Messages'])
+            ->add('messages', null, ['label' => 'Historique'])
             ->add('createdAt', null, ['label' => 'Créé le'])
             ->add('updatedAt', null, ['label' => 'Mis à jour']);
     }
@@ -61,14 +73,29 @@ final class SupportConversationAdmin extends AbstractAdmin
                 'field_type' => ChoiceType::class,
                 'field_options' => [
                     'choices' => [
-                        'Ouvert' => 'open',
-                        'En cours' => 'in_progress',
-                        'Résolu' => 'resolved',
-                        'Fermé' => 'closed',
+                        'Ouvert'    => 'open',
+                        'En cours'  => 'in_progress',
+                        'Résolu'    => 'resolved',
+                        'Fermé'     => 'closed',
                     ],
                 ],
                 'label' => 'Statut',
             ])
             ->add('user.email', StringFilter::class, ['label' => 'Email utilisateur']);
+    }
+
+    public function preUpdate(object $object): void
+    {
+        $form = $this->getForm();
+        $replyBody = trim((string) $form->get('replyBody')->getData());
+
+        if ($replyBody !== '') {
+            $message = (new SupportMessage())
+                ->setAuthor('service')
+                ->setContent($replyBody)
+                ->setSentAt(new \DateTimeImmutable());
+            $object->addMessage($message);
+            $object->setUpdatedAt(new \DateTimeImmutable());
+        }
     }
 }
