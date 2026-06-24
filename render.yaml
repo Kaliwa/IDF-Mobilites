@@ -81,6 +81,66 @@ services:
         sync: false
       - key: ADMIN_PASSWORD
         sync: false
+      - key: SENTRY_DSN
+        sync: false
+
+  - type: web
+    name: idf-mobilites-umami
+    runtime: image
+    plan: free
+    autoDeploy: true
+    image:
+      url: ghcr.io/umami-software/umami:postgresql-latest
+    healthCheckPath: /api/heartbeat
+    envVars:
+      # Copy Internal Database URL from idf-mobilites-db, replace /idf_mobilites with /umami
+      # (run scripts/render-init-databases.sql on the Postgres instance first).
+      - key: DATABASE_URL
+        sync: false
+      - key: APP_SECRET
+        generateValue: true
+
+  - type: keyvalue
+    name: idf-mobilites-glitchtip-redis
+    plan: free
+    ipAllowList:
+      - source: 0.0.0.0/0
+        description: everywhere
+    maxmemoryPolicy: allkeys-lru
+
+  - type: web
+    name: idf-mobilites-glitchtip
+    runtime: image
+    plan: free
+    autoDeploy: true
+    image:
+      url: docker.io/glitchtip/glitchtip:latest
+    healthCheckPath: /login
+    envVars:
+      # Copy Internal Database URL from idf-mobilites-db, replace /idf_mobilites with /glitchtip
+      # (run scripts/render-init-databases.sql on the Postgres instance first).
+      - key: DATABASE_URL
+        sync: false
+      - key: SECRET_KEY
+        generateValue: true
+      - key: REDIS_URL
+        fromService:
+          type: keyvalue
+          name: idf-mobilites-glitchtip-redis
+          property: connectionString
+      - key: EMAIL_URL
+        value: consolemail://
+      - key: DEFAULT_FROM_EMAIL
+        value: noreply@idf-mobilites.onrender.com
+      - key: GLITCHTIP_DOMAIN
+        fromService:
+          type: web
+          name: idf-mobilites-glitchtip
+          envVarKey: RENDER_EXTERNAL_URL
+      - key: ENABLE_USER_REGISTRATION
+        value: "True"
+      - key: CELERY_WORKER_CONCURRENCY
+        value: "2"
 
   - type: web
     name: idf-mobilites-web
@@ -88,7 +148,7 @@ services:
     plan: free
     autoDeploy: true
     dockerfilePath: ./apps/web/Dockerfile
-    dockerContext: ./apps/web
+    dockerContext: .
     healthCheckPath: /
     envVars:
       - key: NEXT_PUBLIC_API_URL
@@ -101,3 +161,12 @@ services:
           type: web
           name: idf-mobilites-mercure
           envVarKey: RENDER_EXTERNAL_URL
+      - key: NEXT_PUBLIC_UMAMI_URL
+        fromService:
+          type: web
+          name: idf-mobilites-umami
+          envVarKey: RENDER_EXTERNAL_URL
+      - key: NEXT_PUBLIC_UMAMI_WEBSITE_ID
+        sync: false
+      - key: NEXT_PUBLIC_SENTRY_DSN
+        sync: false

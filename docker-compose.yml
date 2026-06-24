@@ -76,6 +76,7 @@ services:
       NEXT_PUBLIC_MERCURE_URL: http://localhost:3001/.well-known/mercure
       NEXT_PUBLIC_UMAMI_URL: http://localhost:3002
       NEXT_PUBLIC_UMAMI_WEBSITE_ID: ""
+      NEXT_PUBLIC_SENTRY_DSN: ""
       INTERNAL_API_URL: http://api:8000
     ports:
       - "3000:3000"
